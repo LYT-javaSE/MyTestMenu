@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="YongHu" />
+    <version value="3" />
+    <list>
+        <mapping class="com.example.mytestmenu.entity_class.Users"></mapping>
+        <mapping class="com.example.mytestmenu.entity_class.Hospitals"></mapping>
+        <mapping class="com.example.mytestmenu.entity_class.Offices"></mapping>
+        <mapping class="com.example.mytestmenu.entity_class.Doctors"></mapping>
+    </list>
+
+</litepal>
