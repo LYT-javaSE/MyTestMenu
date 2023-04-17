@@ -63,7 +63,6 @@ public class InquiryActivity extends AppCompatActivity implements View.OnClickLi
             Msg msg = new Msg(content, Msg.TYPE_SEND);
             msgList.add(msg);
             // 刷新 RecyclerView，显示新添加的消息
-//            msgAdapter.notifyDataSetChanged();
             msgAdapter.notifyItemInserted(msgList.size() - 1);
             // 模拟接收方回复一条消息
             Msg receiverMessage = new Msg("自动回复：这是一条接收方的消息", Msg.TYPE_RECEIVED);
@@ -71,7 +70,6 @@ public class InquiryActivity extends AppCompatActivity implements View.OnClickLi
             // 清空输入文本框
             inputText.setText("");
 // 在添加新消息后，将 RecyclerView 滚动到最后一条消息
-//            msgAdapter.notifyDataSetChanged();
             msgAdapter.notifyItemInserted(msgList.size() - 1);
             msgRecyclerView.smoothScrollToPosition(msgList.size() - 1);
         }
