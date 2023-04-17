@@ -1,43 +1,28 @@
 package com.example.mytestmenu.activity;
 
 import com.amap.api.navi.AMapNavi;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.MapsInitializer;
-//import com.amap.api.maps.offlinemap.OfflineMapManager;
-import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.amap.api.maps.model.Poi;
-import com.amap.api.navi.AmapNaviPage;
-import com.amap.api.navi.AmapNaviParams;
-import com.amap.api.navi.AmapNaviType;
-import com.amap.api.navi.AmapPageType;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
-import com.autonavi.base.amap.mapcore.AMapNativeGlOverlayLayer;
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.adapter.LocationListAdapter;
 import com.example.mytestmenu.utils.LocationInfo;
@@ -95,94 +80,11 @@ public class MapActivity extends AppCompatActivity implements PoiSearch.OnPoiSea
         aMap.getUiSettings().setMyLocationButtonEnabled(true);//设置默认定位按钮是否显示，非必需设置。
         aMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
         aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
-//显示POI搜索结果
+        //显示POI搜索结果
         listView.setLayoutManager(new LinearLayoutManager(this));
         initListener();
-
-
-
-
-
-//
-////        导航实现
-//        try {
-//            aMapNavi=AMapNavi.getInstance(this);
-//        } catch (com.amap.api.maps.AMapException e) {
-//            throw new RuntimeException(e);
-//        }
-//        aMapNavi.setUseInnerVoice(true,false);
-//
-//        // 为POI列表项设置点击事件监听器
-//        listAdapter=new LocationListAdapter(this,data);
-//        listAdapter.setOnItemClickListener(poi->{
-//                // 获取点击的POI数据，跳转到导航界面
-//                startMapSeActivity(poi);
-//        });
-
-
-
-//        mLocationOption = new AMapLocationClientOption();
-//        /**
-//         * 设置定位场景，目前支持三种场景（签到、出行、运动，默认无场景）
-//         */
-//        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
-////        if (null != locationClient) {
-////            locationClient.setLocationOption(mLocationOption);
-////            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
-////            locationClient.stopLocation();
-////            locationClient.startLocation();
-////        }
-//        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-//        mLocationOption.setInterval(1000);
-//        //设置是否返回地址信息（默认返回地址信息）
-//        mLocationOption.setNeedAddress(true);
-//        AMapLocationListener mAMapLocationListener = new AMapLocationListener() {
-//            @Override
-//            public void onLocationChanged(AMapLocation amapLocation) {
-//                if (amapLocation != null) {
-//                    if (amapLocation.getErrorCode() == 0) {
-////可在其中解析amapLocation获取相应内容。
-//                    } else {
-//                        //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-//                        Log.e("AmapError", "location Error, ErrCode:"
-//                                + amapLocation.getErrorCode() + ", errInfo:"
-//                                + amapLocation.getErrorInfo());
-//                    }
-//                }
-//                amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-//
-//            }
-//        };
-
-
-//        try {
-//            mOfflineMapManager = new OfflineMapManager(this, this);
-//        }catch (Exception e){
-//
-//        }
-//        if (mOfflineMapManager != null){
-//            // TODO
-//        }//
-
-
-//        try {
-//            mAMapNavi = AMapNavi.getInstance(getApplicationContext());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        if (mAMapNavi != null){
-//// TODO
-//        }
     }
 
-
-//    private void startMapSeActivity(LocationInfo poi) {
-//
-////构建导航组件配置类，没有传入起点，所以起点默认为 “我的位置”
-//        AmapNaviParams params = new AmapNaviParams(null, null, null, AmapNaviType.DRIVER, AmapPageType.ROUTE);
-////启动导航组件
-//        AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), params, null);
-//    }
 
 
     @Override
@@ -306,14 +208,4 @@ public class MapActivity extends AppCompatActivity implements PoiSearch.OnPoiSea
     public void onPoiItemSearched(PoiItem item, int rCode) {
 
     }
-
-
-
-
-//
-//    public void onClickListener(RecyclerView parent,View view,int position,AddressInfo data) {
-////        Poi poi=new Poi(data.getText(),new LatLng(point.getLatitude(),point.getLongitude(),data.getPoiID()));
-////        AmapNaviParams params=new AmapNaviParams(null,null,poi,AmapNaviType.DRIVER,AmapPageType.Route);
-////        AmapPageType.getInstance().MapSeActivity(getApplicationContext(),params,null);
-//    }
 }
