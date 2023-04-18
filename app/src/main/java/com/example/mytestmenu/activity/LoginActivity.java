@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mytestmenu.R;
@@ -27,8 +28,10 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity{
     private Button mbtn1;
+    private TextView tvReg;
     private EditText medtPho;
     private EditText medtPwd;
+    private RadioGroup radioGroup;
     Intent intent=null;
     private boolean isPatient=true; // 记录点击的按钮是否为患者按钮
     private int loginSuccess=0;//判断是否匹配成功
@@ -49,10 +52,11 @@ public class LoginActivity extends AppCompatActivity{
 
 //      找到控件
         mbtn1=findViewById(R.id.login_button);
+        tvReg=findViewById(R.id.register_text);
         medtPho=findViewById(R.id.phone_text);
         medtPwd=findViewById(R.id.password_text);
 //      绑定身份
-        RadioGroup radioGroup=findViewById(R.id.rg_role);
+        radioGroup=findViewById(R.id.rg_role);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -68,6 +72,7 @@ public class LoginActivity extends AppCompatActivity{
         });
         //      点击登录
         mbtn1.setOnClickListener(this::gohome);
+        tvReg.setOnClickListener(this::goreg);
     }
     public void gohome(View view){
 //        获取输入信息
@@ -167,6 +172,8 @@ public class LoginActivity extends AppCompatActivity{
     }
     public void goreg(View view){
         Intent intent=new Intent(this, RegisterActivity.class);
+        intent.putExtra("user_type", isPatient);
+        Log.d("传Boolean值","goreg: "+isPatient);
         startActivity(intent);
         finish();
     }

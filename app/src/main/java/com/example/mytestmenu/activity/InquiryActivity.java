@@ -69,7 +69,7 @@ public class InquiryActivity extends AppCompatActivity implements View.OnClickLi
             msgList.add(receiverMessage);
             // 清空输入文本框
             inputText.setText("");
-// 在添加新消息后，将 RecyclerView 滚动到最后一条消息
+            // 在添加新消息后，将 RecyclerView 滚动到最后一条消息
             msgAdapter.notifyItemInserted(msgList.size() - 1);
             msgRecyclerView.smoothScrollToPosition(msgList.size() - 1);
         }
