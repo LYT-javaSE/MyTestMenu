@@ -13,6 +13,7 @@ public class Users extends LitePalSupport {
     private String userPassword;
     private String userRePassword;
     private String userAvatar;
+    private String userAddress;
 
 
     public void setId(int id) {
@@ -71,5 +72,11 @@ public class Users extends LitePalSupport {
     }
     public String getUserAvatar() {
         return userAvatar;
+    }
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
+    public String getUserAddress() {
+        return userAddress;
     }
 }
