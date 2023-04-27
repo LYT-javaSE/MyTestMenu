@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText registerPassword;
     private EditText registerRePassword;
     private Button register;
-    private static final String Base_URL = "http://10.0.2.2:8080"; // 后端注册接口地址
+    static final String Base_URL = "http://10.0.2.2:8080"; // 后端注册接口地址
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,15 +226,25 @@ public class RegisterActivity extends AppCompatActivity {
                                         });
                                     } catch (JSONException | IOException e) {
                                         e.printStackTrace();
-                                        Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                                     }
                                 }
                                 else {
                                     // 处理错误响应
                                     String errorMessage = response.message();
                                     // 显示错误提示
-                                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                                    Log.d("理应显示响应错误信息:", errorMessage);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                                            Log.d("理应显示响应错误信息:", errorMessage);
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -296,7 +306,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         });
                                     } catch (JSONException | IOException e) {
                                         e.printStackTrace();
-                                        Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show();
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show();
+                                        });
                                     }
                                 }
                             }
@@ -305,7 +317,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         }else{
-            Toast.makeText(RegisterActivity.this,"状态异常",Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> {
+                Toast.makeText(RegisterActivity.this,"状态异常",Toast.LENGTH_SHORT).show();
+            });
         }
     }
 //    public void performRegister(String name,String phone,String password,String repassword){

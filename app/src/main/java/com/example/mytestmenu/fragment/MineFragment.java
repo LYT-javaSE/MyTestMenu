@@ -41,8 +41,8 @@ public class MineFragment extends Fragment {
 
         String name=bundle.getString("name");
         mTextView1.setText(name);
-        String phone=bundle.getString("phone");
-        mTextView2.setText(phone);
+        int phone=bundle.getInt("phone");
+        mTextView2.setText(String.valueOf(phone));
 
         mImgView.setOnClickListener(new View.OnClickListener() {
             @Override

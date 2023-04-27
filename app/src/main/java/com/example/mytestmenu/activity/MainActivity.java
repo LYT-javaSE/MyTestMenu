@@ -56,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
                         //取得启动该Activity的Intent对象
                         Intent intent =getIntent();
 //                        /*取出Intent中附加的数据*/
-                        String first = intent.getStringExtra("userPhone");
+                        int first = intent.getIntExtra("userPhone",0);
                         String second = intent.getStringExtra("userName");
 //                        Log.d("MineFragment", "onCreate: "+first+second);
 //                        向fragment传递数据
                         Bundle bundle=new Bundle();
-                        bundle.putString("phone",first);
+                        bundle.putInt("phone",first);
                         bundle.putString("name",second);
                         fragment.setArguments(bundle);
 //nav_contatiner是activity2的xml文件中的fragment控件的id，用replace（）方法替换掉activi2中的fragment
