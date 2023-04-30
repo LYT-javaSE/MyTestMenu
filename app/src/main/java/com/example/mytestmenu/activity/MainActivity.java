@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 //                        /*取出Intent中附加的数据*/
                         int first = intent.getIntExtra("userPhone",0);
                         String second = intent.getStringExtra("userName");
-//                        Log.d("MineFragment", "onCreate: "+first+second);
 //                        向fragment传递数据
                         Bundle bundle=new Bundle();
                         bundle.putInt("phone",first);

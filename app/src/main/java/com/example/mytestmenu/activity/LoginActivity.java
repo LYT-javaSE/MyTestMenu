@@ -20,20 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mytestmenu.R;
-import com.example.mytestmenu.entity_class.Users;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.litepal.LitePal;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -43,6 +38,7 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity{
     private Button mbtn1;
     private TextView tvReg;
+    private TextView tvPwd;
     private EditText medtPho;
     private EditText medtPwd;
     private RadioGroup radioGroup;
@@ -62,6 +58,7 @@ public class LoginActivity extends AppCompatActivity{
 //      找到控件
         mbtn1=findViewById(R.id.login_button);
         tvReg=findViewById(R.id.register_text);
+        tvPwd=findViewById(R.id.forgot_password_text);
         medtPho=findViewById(R.id.phone_text);
         medtPwd=findViewById(R.id.password_text);
 //      绑定身份
@@ -81,7 +78,10 @@ public class LoginActivity extends AppCompatActivity{
         });
         //      点击登录
         mbtn1.setOnClickListener(this::gohome);
+        //        点击去注册
         tvReg.setOnClickListener(this::goreg);
+        //        点击去修改密码
+        tvPwd.setOnClickListener(this::gopwd);
     }
     public void gohome(View view){
         OkHttpClient client = new OkHttpClient();
@@ -170,44 +170,6 @@ public class LoginActivity extends AppCompatActivity{
                 }
             });
         }
-//            List<Users> users = LitePal.findAll(Users.class);
-//            for (Users patient : users) {
-////              打印查到的所有号码
-//                Log.d("LoginActivity", "数据库里的号码: " + patient.getUserPhone());
-//                if (patient.getUserPhone().equals(phone) && !patient.getUserPassword().equals(pwd)) {
-//                    loginSuccess = 0;
-//                    break;
-//                } else if(patient.getUserPhone().equals(phone) && patient.getUserPassword().equals(pwd)) {
-//                    loginSuccess = 1;
-//                    break;
-//                }
-//                else {
-//                    loginSuccess = 2;
-//                }
-//            }
-//            switch (loginSuccess) {
-//                case 0: {
-//                    Toast.makeText(this, "密码错误，请重试", Toast.LENGTH_SHORT).show();
-//                    break;
-//                }
-//                case 1: {
-//                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-//                    intent = new Intent(LoginActivity.this, MainActivity.class);
-////                    查询phone对应的用户名
-//                    List<Users> u=LitePal.where("userPhone=?",phone).find(Users.class);
-////                    传到MainActivity中去
-//                    intent.putExtra("userName",u.get(0).getUserName());
-//                    intent.putExtra("userPhone", phone);
-//                    startActivity(intent);
-//                    break;
-//                }
-//                case 2:{
-//                    Toast.makeText(this, "用户名不存在，请先注册", Toast.LENGTH_SHORT).show();
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
 
 //        医生端登录
         else {
@@ -284,46 +246,16 @@ public class LoginActivity extends AppCompatActivity{
                     }
                 }
             });
-//            List<Doctors> doctors = LitePal.findAll(Doctors.class);
-//            for (Doctors doctor : doctors) {
-////              打印查到的所有号码
-//                Log.d("LoginActivity", "数据库里的号码: " + doctor.getDoctPhone());
-//                if (doctor.getDoctPhone().equals(phone) && !doctor.getDoctPassword().equals(pwd)) {
-//                    loginSuccess = 0;
-//                    break;
-//                } else if(doctor.getDoctPhone().equals(phone) && doctor.getDoctPassword().equals(pwd)) {
-//                    loginSuccess = 1;
-//                    break;
-//                }
-//                else {
-//                    loginSuccess = 2;
-//                }
-//            }
-//            switch (loginSuccess) {
-//                case 0: {
-//                    Toast.makeText(this, "密码错误，请重试", Toast.LENGTH_SHORT).show();
-//                    break;
-//                }
-//                case 1: {
-//                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-//                    intent = new Intent(LoginActivity.this, DocBaseActivity.class);
-//                    List<Doctors> d=LitePal.where("doctPhone=?",phone).find(Doctors.class);
-//                    intent.putExtra("doctName", d.get(0).getDoctName());
-//                    intent.putExtra("doctPhone", phone);
-//                    startActivity(intent);
-//                    break;
-//                }
-//                case 2:{
-//                    Toast.makeText(this, "用户名不存在，请先注册", Toast.LENGTH_SHORT).show();
-//                    break;
-//                }
-//                default:
-//                    break;
-//            }
         }
     }
     public void gopwd(View view){
         Intent intent=new Intent(this, ForgetPwdActivity.class);
+//        把用户类型传过去
+        intent.putExtra("user_type", isPatient);
+//        把相应用户输入的手机号数据传过去，只传数据的话不用考虑是哪种类型，因为使用者知道自己的类型，输入的手机号肯定在相应的类型中，只是密码忘了
+        String phone=medtPho.getText().toString().trim();
+        intent.putExtra("phone", phone);
+        Log.d("传过去的手机号：", phone);
         startActivity(intent);
         finish();
     }
