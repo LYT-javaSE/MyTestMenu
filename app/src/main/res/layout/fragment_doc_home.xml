@@ -1,14 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.DocHomeFragment">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- 挂号处理界面 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <!-- 挂号信息展示 -->
+        <TextView
+            android:id="@+id/tv_registration_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="挂号信息展示" />
+
+        <!-- 按钮区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+>
+
+            <!-- 处理挂号按钮 -->
+            <Button
+                android:id="@+id/btn_process_registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="处理挂号" />
+
+            <!-- 取消挂号按钮 -->
+            <Button
+                android:id="@+id/btn_cancel_registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="取消挂号" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- 处理处方界面 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 处方信息展示 -->
+        <TextView
+            android:id="@+id/tv_prescription_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="处方信息展示" />
+
+        <!-- 处理处方按钮 -->
+        <Button
+            android:id="@+id/btn_process_prescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="处理处方" />
+
+    </LinearLayout>
+
+    <!-- 处理在线问诊界面 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 在线问诊信息展示 -->
+        <TextView
+            android:id="@+id/tv_online_consultation_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="在线问诊信息展示" />
+
+        <!-- 处理在线问诊按钮 -->
+        <Button
+            android:id="@+id/btn_process_online_consultation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="处理在线问诊" />
+
+    </LinearLayout>
+
+</LinearLayout>

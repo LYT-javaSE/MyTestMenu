@@ -1,14 +1,39 @@
 package com.example.mytestmenu.activity;
 
+import static com.example.mytestmenu.activity.RegisterActivity.Base_URL;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.mytestmenu.R;
+import com.example.mytestmenu.adapter.RegHosAdapter;
+import com.example.mytestmenu.entity_class.Hospitals;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RegHospitalActivity extends AppCompatActivity {
+    private RecyclerView mRV;
+    private RegHosAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private List<Hospitals> mHospitals = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +91,16 @@ public class RegHospitalActivity extends AppCompatActivity {
                 "\n" +
                 "8.1 本服务为用户提供便捷的预约方式，不承诺所有用户随时都能约到指定的号，有不便之处敬请谅解，有任何好的建议也可以直接向我们反馈。\n" +
                 "\n","在线挂号须知");
+        mRV = findViewById(R.id.recycler_view_hospital);
+        mRV.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRV.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RegHosAdapter(mHospitals);
+        mRV.setAdapter(mAdapter);
+
+        initView();
     }
 
 
@@ -75,13 +110,51 @@ public class RegHospitalActivity extends AppCompatActivity {
                 .setTitle(strTitle)
                 .setMessage(strMsg)
                 .setPositiveButton("确认",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-                            }
+                        (dialog, which) -> {
+                            // TODO Auto-generated method stub
                         })
                 .show();
     }
+
+    private void initView(){
+        String user_url = Base_URL + "/users/showHospital";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(user_url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonStr = response.body().string();
+                Log.d("打印响应体", jsonStr);
+                JSONArray jsonArray = null;
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    jsonArray = jsonObject.getJSONArray("data");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                List<Hospitals> hospitals = new Gson().fromJson(String.valueOf(jsonArray), new TypeToken<List<Hospitals>>(){}.getType());
+
+                for (Hospitals hospital : hospitals) {
+                    Log.d("打印列表项：", "name = " + hospital.getName() + ", address = " + hospital.getAddress());
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHospitals.clear();
+                        mHospitals.addAll(hospitals);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+    }
+
 
 }
