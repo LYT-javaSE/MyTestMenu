@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText registerPassword;
     private EditText registerRePassword;
     private Button register;
-    static final String Base_URL = "http://10.0.2.2:8080"; // 后端注册接口地址
+    public static final String Base_URL = "http://10.0.2.2:8080"; // 后端注册接口地址
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,27 @@ public class RegisterActivity extends AppCompatActivity {
     public void performRegister(){
         registerName = findViewById(R.id.name_edit);
         registerPhone = findViewById(R.id.phone_edit);
+
+        registerPhone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 判断手机号格式是否正确，不正确则弹出提示框
+                if (!isMobilePhone(s.toString())) {
+                    registerPhone.setError("手机号格式不正确");
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {}
+
+            // 判断手机号格式是否正确的方法
+            public boolean isMobilePhone(String phone) {
+                String regex = "^1[34578]\\d{9}$";
+                return phone.matches(regex);
+            }
+        });
+
         registerPassword = findViewById(R.id.password_edit);
         registerRePassword = findViewById(R.id.password_edit_re);
         register=findViewById(R.id.register_btn);

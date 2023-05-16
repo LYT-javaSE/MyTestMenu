@@ -6,10 +6,9 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.fragment.HomeFragment;
 import com.example.mytestmenu.fragment.MineFragment;
@@ -22,16 +21,11 @@ import com.google.android.material.navigation.NavigationBarView;
  * 宿主activity
  */
 public class MainActivity extends AppCompatActivity {
-
     BottomNavigationView bnv;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         /**
          * 注册监听
@@ -44,9 +38,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment=null;
+                Intent intent;
+                Bundle bundle;
                 switch (item.getItemId()){
                     case R.id.home:
                         fragment=new HomeFragment();
+
+                        intent =getIntent();
+                        String fi = intent.getStringExtra("userPhone");
+                        bundle=new Bundle();
+                        bundle.putString("phone",fi);
+                        fragment.setArguments(bundle);
+
                         break;
                     case R.id.msg:
                         fragment=new MsgFragment();
@@ -54,18 +57,21 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.mine:
                         fragment=new MineFragment();
                         //取得启动该Activity的Intent对象
-                        Intent intent =getIntent();
+                        intent =getIntent();
 //                        /*取出Intent中附加的数据*/
-                        int first = intent.getIntExtra("userPhone",0);
+                        String first = intent.getStringExtra("userPhone");
                         String second = intent.getStringExtra("userName");
+                        int third = intent.getIntExtra("userAge",0);
+                        String forth = intent.getStringExtra("userSex");
+                        String fifth = intent.getStringExtra("birthDay");
 //                        向fragment传递数据
-                        Bundle bundle=new Bundle();
-                        bundle.putInt("phone",first);
+                        bundle=new Bundle();
+                        bundle.putString("phone",first);
                         bundle.putString("name",second);
+                        bundle.putInt("age", third);
+                        bundle.putString("sex",forth);
+                        bundle.putString("birth",fifth);
                         fragment.setArguments(bundle);
-//nav_contatiner是activity2的xml文件中的fragment控件的id，用replace（）方法替换掉activi2中的fragment
-//                        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-//                        transaction.replace(R.id.nav_container,fragment).commitNow();
 
                         break;
                     default:break;
@@ -75,7 +81,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 }

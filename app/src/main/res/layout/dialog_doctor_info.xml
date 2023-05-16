@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="20sp"
+        android:text="您尚未补充关键信息，请补充关键信息再执行后续操作！"/>
+    <EditText
+        android:id="@+id/et_doctor_hospital"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:hint="医院"/>
+    <EditText
+        android:id="@+id/et_doctor_office"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="科室"/>
+    <EditText
+        android:id="@+id/et_doctor_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="职称"/>
+    <EditText
+        android:id="@+id/et_doctor_talent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="擅长领域"/>
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:hint="点击提交"/>
+</LinearLayout>

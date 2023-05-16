@@ -29,40 +29,40 @@
                 android:id="@+id/btn_process_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="处理挂号" />
+                android:text="挂号列表" />
 
             <!-- 取消挂号按钮 -->
-            <Button
-                android:id="@+id/btn_cancel_registration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="取消挂号" />
+<!--            <Button-->
+<!--                android:id="@+id/btn_cancel_registration"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="取消挂号" />-->
 
         </LinearLayout>
 
     </LinearLayout>
 
     <!-- 处理处方界面 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical">-->
 
-        <!-- 处方信息展示 -->
-        <TextView
-            android:id="@+id/tv_prescription_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="处方信息展示" />
+<!--        &lt;!&ndash; 处方信息展示 &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/tv_prescription_info"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="处方信息展示" />-->
 
-        <!-- 处理处方按钮 -->
-        <Button
-            android:id="@+id/btn_process_prescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="处理处方" />
+<!--        &lt;!&ndash; 处理处方按钮 &ndash;&gt;-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_process_prescription"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="处理处方" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <!-- 处理在线问诊界面 -->
     <LinearLayout

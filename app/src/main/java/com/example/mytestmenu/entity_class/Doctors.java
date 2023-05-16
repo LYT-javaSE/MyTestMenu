@@ -4,16 +4,21 @@ import org.litepal.crud.LitePalSupport;
 
 public class Doctors extends LitePalSupport {
     private int id;
-    private int doctNum;
+    private String doctNum;
+//    编辑个人信息所用（age、name）
     private int doctAge;
+//    医生注册信息
     private String doctName;
+    private String doctSex;
     private String doctPhone;
     private String doctPassword;
     private String doctRePassword;
+//    医生首先要补充的关键信息
     private String doctTile;
     private String doctOfOffice;
     private String doctOfHospital;
     private String doctTalent;
+//    医生头像
     private String doctAvatar;
 
 
@@ -28,9 +33,9 @@ public class Doctors extends LitePalSupport {
         return id;
     }
 
-    public void setDoctNum(int doctNum) {this.doctNum = doctNum;}
+    public void setDoctNum(String doctNum) {this.doctNum = doctNum;}
 
-    public int getDoctNum() {
+    public String getDoctNum() {
         return doctNum;
     }
 
@@ -48,6 +53,13 @@ public class Doctors extends LitePalSupport {
 
     public String getDoctName() {
         return doctName;
+    }
+    public void setDoctSex(String doctSex) {
+        this.doctSex = doctSex;
+    }
+
+    public String getDoctSex() {
+        return doctSex;
     }
 
     public void setDoctPhone(String doctPhone) {

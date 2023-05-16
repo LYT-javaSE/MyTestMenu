@@ -1,32 +1,30 @@
-<!-- activity_patient_registration.xml -->
-<!--选择科室-->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".activity.RegOfficeActivity">
+    tools:context=".activity.BeforeInquiryActivity"
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/cobt">
         <ImageView
-            android:id="@+id/img_back"
+            android:id="@+id/back"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/flow"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="请选择科室"
+            android:text="请选择医生"
             android:textSize="30sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_office"
+        android:id="@+id/rvDoctorList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+        android:layout_height="match_parent" />
 </LinearLayout>

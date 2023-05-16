@@ -1,6 +1,6 @@
 package com.example.mytestmenu.adapter;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +16,10 @@ import java.util.List;
 public class RegHosAdapter extends RecyclerView.Adapter<RegHosAdapter.MyViewHolder> {
 
     private List<Hospitals> mHospitals;
-    public RegHosAdapter(List<Hospitals> hospitals) {
+    private ItemClickListener mItemClickListener; //添加接口
+    public RegHosAdapter(List<Hospitals> hospitals, ItemClickListener listener) {
         this.mHospitals = hospitals;
+        this.mItemClickListener = listener;
     }
 
     @Override
@@ -28,9 +30,15 @@ public class RegHosAdapter extends RecyclerView.Adapter<RegHosAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.mTextView1.setText(mHospitals.get(position).getName());
-        holder.mTextView2.setText(mHospitals.get(position).getAddress());
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.mTextView1.setText(mHospitals.get(holder.getAdapterPosition()).getName());
+        holder.mTextView2.setText(mHospitals.get(holder.getAdapterPosition()).getAddress());
+        holder.itemView.setOnClickListener(new View.OnClickListener() { //添加itemView的点击事件监听器
+            @Override
+            public void onClick(View v) {
+                mItemClickListener.onItemClick(mHospitals.get(position));
+            }
+        });
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -46,5 +54,9 @@ public class RegHosAdapter extends RecyclerView.Adapter<RegHosAdapter.MyViewHold
     @Override
     public int getItemCount() {
         return mHospitals.size();
+    }
+    //定义接口
+    public interface ItemClickListener {
+        void onItemClick(Hospitals hospital);
     }
 }

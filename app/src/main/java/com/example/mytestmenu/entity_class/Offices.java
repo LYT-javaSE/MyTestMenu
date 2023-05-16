@@ -8,11 +8,8 @@ import java.util.List;
 public class Offices extends LitePalSupport{
 
     private int id;
-    private String officeName;
+    private String office;
     private List<Hospitals> hospitalsList = new ArrayList<>();
-
-
-
 
 
     public void setId(int id) {
@@ -23,12 +20,12 @@ public class Offices extends LitePalSupport{
         return id;
     }
 
-    public void setOfficeName(String doctNum) {
-        this.officeName = officeName;
+    public void setOffice(String office) {
+        this.office = office;
     }
 
-    public String  getOfficeName() {
-        return officeName;
+    public String  getOffice() {
+        return office;
     }
 
 

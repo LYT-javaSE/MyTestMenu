@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="appdata" />
-    <version value="4" />
+    <version value="5" />
     <list>
         <mapping class="com.example.mytestmenu.entity_class.Users"></mapping>
         <mapping class="com.example.mytestmenu.entity_class.Hospitals"></mapping>
         <mapping class="com.example.mytestmenu.entity_class.Offices"></mapping>
         <mapping class="com.example.mytestmenu.entity_class.Doctors"></mapping>
+        <mapping class="com.example.mytestmenu.entity_class.Avatar"></mapping>
     </list>
 
 </litepal>

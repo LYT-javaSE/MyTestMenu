@@ -28,12 +28,26 @@
             android:hint="请输入患者年龄"
             android:inputType="number" />
 
-        <Spinner
-            android:id="@+id/spGender"
+        <!-- 性别选择 -->
+        <RadioGroup
+            android:id="@+id/radioGroupGender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="请选择患者性别"
-            android:entries="@array/gender_options" />
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="男" />
+
+            <RadioButton
+                android:id="@+id/radioButtonFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="女" />
+
+        </RadioGroup>
 
         <EditText
             android:id="@+id/etPhone"
@@ -41,6 +55,47 @@
             android:layout_height="wrap_content"
             android:hint="请输入患者手机号"
             android:inputType="phone" />
+
+        <!-- 挂号日期选择 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择挂号日期"
+            android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/text_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30px"
+            android:text="yyyy-mm-dd"/>
+        <DatePicker
+            android:id="@+id/reg_date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+<!--        <TextView-->
+<!--            android:id="@+id/tv_date"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="72dp"-->
+<!--            android:layout_marginLeft="31dp"-->
+<!--            android:gravity="center"-->
+<!--            android:hint="请选择挂号日期"-->
+<!--            android:textSize="40sp" />-->
+
+
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FF909090"/>
+        <TextView
+            android:id="@+id/text_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="挂号费：5元"
+            android:textSize="18sp"/>
 
     </LinearLayout>
 

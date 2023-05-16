@@ -19,8 +19,8 @@ public class MsgFragment extends Fragment {
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_msg, container, false);
-
-        //         跳转到问诊
+        //记录该用户和哪个医生聊过天，显示医生列表
+        //         跳转到问诊列表
         RecyclerView recyView=view.findViewById(R.id.rv_msg);
         recyView.setOnClickListener(new View.OnClickListener() {
             @Override

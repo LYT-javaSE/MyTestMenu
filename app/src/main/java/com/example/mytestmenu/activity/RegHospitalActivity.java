@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.adapter.RegHosAdapter;
@@ -29,7 +31,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RegHospitalActivity extends AppCompatActivity {
+public class RegHospitalActivity extends AppCompatActivity implements RegHosAdapter.ItemClickListener {
     private RecyclerView mRV;
     private RegHosAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -39,6 +41,10 @@ public class RegHospitalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reg_hospital);
+
+        ImageView imgBack = findViewById(R.id.img_back);
+        imgBack.setOnClickListener(v -> finish());
+
         openDialog("一、预约范围\n" +
                 "\n" +
                 "1.1 挂号平台提供次日起七天的预约服务，用户可预约中医院的大部分科室次日起至七天的就诊号源。具体的预约挂号周期和号源信息，以网站公示为准。\n" +
@@ -97,7 +103,7 @@ public class RegHospitalActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRV.setLayoutManager(mLayoutManager);
 
-        mAdapter = new RegHosAdapter(mHospitals);
+        mAdapter = new RegHosAdapter(mHospitals,this);
         mRV.setAdapter(mAdapter);
 
         initView();
@@ -154,6 +160,19 @@ public class RegHospitalActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    //实现接口方法，跳转到科室列表页面
+    @Override
+    public void onItemClick(Hospitals hospital) {
+        Intent intent1 =getIntent();
+        String first = intent1.getStringExtra("userPhone");
+        Log.d("传递的手机号，用于拉取挂号列表：", "如"+first);
+        Intent intent = new Intent(this, RegOfficeActivity.class);
+        intent.putExtra("hospital_name", hospital.getName()); //传递医院名给科室列表页面
+        intent.putExtra("hospital_address", hospital.getAddress()); //传递地址给科室列表页面
+        intent.putExtra("u_phone", first);
+        startActivity(intent);
     }
 
 

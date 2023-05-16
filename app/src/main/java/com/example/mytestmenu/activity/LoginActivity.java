@@ -1,7 +1,6 @@
 package com.example.mytestmenu.activity;
 
 import static com.example.mytestmenu.activity.RegisterActivity.Base_URL;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -11,6 +10,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +44,11 @@ public class LoginActivity extends AppCompatActivity{
     private EditText medtPho;
     private EditText medtPwd;
     private RadioGroup radioGroup;
+//    private String mTile; // 医生职称
+//    private String mHospital; // 医院名称
+//    private String mDepartment; // 科室名称
+//    private String mTalent; // 擅长领域
+
     private boolean isPatient=true; // 记录点击的按钮是否为患者按钮
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,26 @@ public class LoginActivity extends AppCompatActivity{
         tvReg=findViewById(R.id.register_text);
         tvPwd=findViewById(R.id.forgot_password_text);
         medtPho=findViewById(R.id.phone_text);
+        // 设置手机号输入框的 TextWatcher 监听器
+        medtPho.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // 判断手机号格式是否正确，不正确则弹出提示框
+                if (!isMobilePhone(s.toString())) {
+                    medtPho.setError("手机号格式不正确");
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {}
+
+            // 判断手机号格式是否正确的方法
+            public boolean isMobilePhone(String phone) {
+                String regex = "^1[34578]\\d{9}$";
+                return phone.matches(regex);
+            }
+        });
         medtPwd=findViewById(R.id.password_text);
 //      绑定身份
         radioGroup=findViewById(R.id.rg_role);
@@ -127,9 +154,12 @@ public class LoginActivity extends AppCompatActivity{
                             if (dataObject != null) {
                                 JSONObject subDataObject = dataObject.optJSONObject("data");
                                 if (subDataObject != null){
-                                    int userPhone = subDataObject.getInt("phone");
+                                    String  userPhone = subDataObject.getString("phone");
                                     String userName = subDataObject.getString("name");
                                     String userPassword = subDataObject.getString("pwd");
+                                    int userAge = Integer.parseInt(subDataObject.getString("age"));
+                                    String userSex = subDataObject.getString("sex");
+                                    String birthDay = subDataObject.getString("birth");
                                     if (code == 200) {
                                         Log.d("状态码：", String.valueOf(code));
                                         // 登录成功，解析用户信息并跳转到主界面
@@ -138,6 +168,9 @@ public class LoginActivity extends AppCompatActivity{
                                             intent.putExtra("userPhone", userPhone);
                                             intent.putExtra("userName", userName);
                                             intent.putExtra("userPassword", userPassword);
+                                            intent.putExtra("userAge", userAge);
+                                            intent.putExtra("userSex", userSex);
+                                            intent.putExtra("birthDay", birthDay);
                                             startActivity(intent);
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                             Log.d("成功登录提示,欢迎：", userName);
@@ -207,18 +240,41 @@ public class LoginActivity extends AppCompatActivity{
                             JSONObject dataObject = jsonObject.optJSONObject("data");
                             if (dataObject != null) {
                                 JSONObject subDataObject = dataObject.optJSONObject("data");
+                                Log.d("医生信息", "onResponse: "+subDataObject);
+
                                 if (subDataObject != null){
-                                    int doctPhone = subDataObject.getInt("phone");
+                                    String doctPhone = subDataObject.getString("phone");
                                     String doctName = subDataObject.getString("name");
-                                    String doctPassword = subDataObject.getString("pwd");
+                                    String doctAvatar = subDataObject.getString("avatar");
+                                    String doctNum = subDataObject.getString("num");
+                                    String doctSex = subDataObject.getString("sex");
+                                    int doctAge=subDataObject.getInt("age");
+                                    String doctTile = subDataObject.getString("doctTile");
                                     if (code == 200) {
                                         // 登录成功，解析用户信息并跳转到主界面
+                                        JSONObject finalSubDataObject = subDataObject;
                                         runOnUiThread(() -> {
-                                            Intent intent = new Intent(LoginActivity.this, DocBaseActivity.class);
-                                            intent.putExtra("doctPhone", doctPhone);
-                                            intent.putExtra("doctName", doctName);
-                                            intent.putExtra("doctPassword", doctPassword);
-                                            startActivity(intent);
+                                            if (finalSubDataObject.isNull("doctTile")){
+                                                Intent intent = new Intent(LoginActivity.this, DoctKeyInfoActivity.class);
+                                                intent.putExtra("doctPhone", doctPhone);
+                                                intent.putExtra("doctName", doctName);
+                                                intent.putExtra("avatar", doctAvatar);
+                                                intent.putExtra("doctNum", doctNum);
+                                                intent.putExtra("doctSex", doctSex);
+                                                intent.putExtra("doctAge", doctAge);
+                                                startActivity(intent);
+                                            }else {
+                                                Intent intent = new Intent(LoginActivity.this, DocBaseActivity.class);
+                                                intent.putExtra("doctPhone", doctPhone);
+                                                intent.putExtra("doctName", doctName);
+                                                intent.putExtra("avatar", doctAvatar);
+                                                intent.putExtra("doctNum", doctNum);
+                                                intent.putExtra("doctSex", doctSex);
+                                                intent.putExtra("doctAge", doctAge);
+                                                intent.putExtra("doctTile", doctTile);
+                                                startActivity(intent);
+                                            }
+
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                         });
                                     }
@@ -286,4 +342,5 @@ public class LoginActivity extends AppCompatActivity{
             finish();
         }
     }
+
 }

@@ -3,17 +3,18 @@ package com.example.mytestmenu.entity_class;
 import org.litepal.crud.LitePalSupport;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Users extends LitePalSupport {
     private int id;
     private int userAge;
-    private Timestamp birthDay;
+//    用户的生日
+    private String  birthDay;
     private String userName;
     private String userPhone;
+    private String userSex;
     private String userPassword;
     private String userRePassword;
-    private String userAvatar;
-    private String userAddress;
 
 
     public void setId(int id) {
@@ -32,8 +33,8 @@ public class Users extends LitePalSupport {
         return userAge;
     }
 
-    public void setBirthDay(Timestamp birthDay){this.birthDay=birthDay;}
-    public Timestamp getBirthDay(){return birthDay;}
+    public void setBirthDay(String birthDay){this.birthDay=birthDay;}
+    public String getBirthDay(){return birthDay;}
 
     public void setUserName(String userName) {
         this.userName = userName;
@@ -51,6 +52,13 @@ public class Users extends LitePalSupport {
         return userPhone;
     }
 
+    public void setUserSex(String userSex) {
+        this.userSex = userSex;
+    }
+
+    public String getUserSex() {
+        return userSex;
+    }
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
@@ -67,16 +75,4 @@ public class Users extends LitePalSupport {
         return userRePassword;
     }
 
-    public void setUserAvatar(String userAvatar) {
-        this.userAvatar = userAvatar;
-    }
-    public String getUserAvatar() {
-        return userAvatar;
-    }
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
-    }
-    public String getUserAddress() {
-        return userAddress;
-    }
 }

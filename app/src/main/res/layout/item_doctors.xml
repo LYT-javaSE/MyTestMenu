@@ -31,12 +31,25 @@
             android:text="所属医院"
             android:textSize="10sp" />
 
-        <TextView
-            android:id="@+id/tvTitle"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="职称"
-            android:textSize="10sp" />
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvOffice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="所属科室"
+                android:textSize="10sp" />
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="职称"
+                android:textSize="10sp"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+
 
         <!-- 其他医生信息，根据实际需求添加相应的TextView或其他控件 -->
 

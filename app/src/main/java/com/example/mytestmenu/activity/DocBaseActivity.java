@@ -23,7 +23,8 @@ import com.google.android.material.navigation.NavigationBarView;
 public class DocBaseActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-
+    Intent intent;
+    Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +45,41 @@ public class DocBaseActivity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.home:
                         fragment=new DocHomeFragment();
+
+                        intent =getIntent();
+                        String one = intent.getStringExtra("doctName");
+                        String two = intent.getStringExtra("doctNum");
+
+                        bundle=new Bundle();
+                        bundle.putString("name",one);
+                        bundle.putString("num",two);
+
+                        fragment.setArguments(bundle);
                         break;
                     case R.id.msg:
                         fragment=new DocItemFragment();
                         break;
                     case R.id.mine:
                         fragment=new DocMineFragment();
+
+                        //取得启动该Activity的Intent对象
+                        intent =getIntent();
+//                        /*取出Intent中附加的数据*/
+                        String first = intent.getStringExtra("doctPhone");
+                        String second = intent.getStringExtra("doctName");
+                        String third = intent.getStringExtra("doctNum");
+                        String forth = intent.getStringExtra("doctSex");
+                        int fifth = intent.getIntExtra("doctAge",0);
+                        String six = intent.getStringExtra("doctAvatar");
+//                        向fragment传递数据
+                        bundle=new Bundle();
+                        bundle.putString("phone",first);
+                        bundle.putString("name",second);
+                        bundle.putString("num",third);
+                        bundle.putString("sex",forth);
+                        bundle.putInt("age",fifth);
+                        bundle.putString("avatar",six);
+                        fragment.setArguments(bundle);
                         break;
                     default:break;
                 }
@@ -58,7 +88,4 @@ public class DocBaseActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.mytestmenu.R;
+import com.example.mytestmenu.activity.BeforeInquiryActivity;
 import com.example.mytestmenu.activity.InquiryActivity;
 import com.example.mytestmenu.activity.MapActivity;
 import com.example.mytestmenu.activity.RegHospitalActivity;
+import com.example.mytestmenu.activity.ShowRecordActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HomeFragment extends Fragment {
 
+    private String phone;
     private View mView;
     private ViewPager mViewPaper;
     private List<ImageView> images;
@@ -191,6 +195,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v){
                 Intent intent=new Intent(getContext(), RegHospitalActivity.class);
+                intent.putExtra("userPhone",phone);
+                Log.d("home传递",phone);
                 getActivity().startActivity(intent);
             }});
 //         跳转到问诊
@@ -198,9 +204,40 @@ public class HomeFragment extends Fragment {
         imgView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                Intent intent=new Intent(getContext(), InquiryActivity.class);
+                Intent intent=new Intent(getContext(), BeforeInquiryActivity.class);
                 getActivity().startActivity(intent);
             }});
+
+
+        Bundle bundle=getArguments();
+        if (bundle != null) {
+            phone=bundle.getString("phone");
+            Log.d("接收Main", "onCreateView: "+phone);
+        }
+
+
+        //         跳转到记录
+        ImageView imgView3=mView.findViewById(R.id.record);
+        imgView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                Intent intent=new Intent(getContext(), ShowRecordActivity.class);
+                intent.putExtra("userPhone",phone);
+                Log.d("home传递", phone);
+                getActivity().startActivity(intent);
+            }});
+
+
+        //         跳转到查询
+//        ImageView imgView4=mView.findViewById(R.id.chaxun);
+//        imgView4.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v){
+//                Intent intent=new Intent(getContext(), ShowDoctorListActivity.class);
+//                getActivity().startActivity(intent);
+//            }});
+
+
 
         return mView;
     }
