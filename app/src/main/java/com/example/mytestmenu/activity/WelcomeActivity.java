@@ -2,7 +2,9 @@ package com.example.mytestmenu.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -29,6 +31,24 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         handler = new Handler();
         //这是一个 Handler 里面的逻辑是从 Splash 界面跳转到 Main 界面
         handler.postDelayed(runnable,6000);
+
+        // 检查登录状态
+        SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+        String phone = sharedPreferences.getString("phone", "");
+        String password = sharedPreferences.getString("password", "");
+
+        if (!phone.isEmpty() && !password.isEmpty()) {
+            // 已登录，跳转到主界面
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+        } else {
+            // 未登录，跳转到登录界面
+            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+        }
+
     }
 
 

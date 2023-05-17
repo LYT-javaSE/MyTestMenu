@@ -82,6 +82,7 @@ public class MineFragment extends Fragment {
                 Intent intent=new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
             }});
+
         return mV;
     }
 
@@ -92,8 +93,6 @@ public class MineFragment extends Fragment {
         // 当从其他页面返回到此页面时，重新填充数据
         fillData();
     }
-
-
 
     private void fillData(){
         OkHttpClient client = new OkHttpClient();

@@ -63,10 +63,6 @@ public class ShowForDoctActivity extends AppCompatActivity implements RecordAdap
 //                        /*取出Intent中附加的数据*/
         String first = intent.getStringExtra("name");
         String second = intent.getStringExtra("num");
-
-        Log.d("name_____", "initView: "+first);
-        Log.d("num_____", "initView: "+second);
-
 //      应该是向后端传值,再接收传过来的数据
 //      构造请求体
         RequestBody requestBody = new FormBody.Builder()
@@ -95,11 +91,6 @@ public class ShowForDoctActivity extends AppCompatActivity implements RecordAdap
                     e.printStackTrace();
                 }
                 List<RecordData> recordData = new Gson().fromJson(String.valueOf(jsonArray), new TypeToken<List<RecordData>>(){}.getType());
-
-                for (RecordData list: recordData) {
-                    Log.d("打印列表项：", "name = " + list.getPatientName() + ", address = " + list.getHospital()+"，office="+ list.getOffice() + ",doctor = " + list.getDoctorName()+ ",time = " + list.getRegisterDate());
-                }
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -111,9 +102,7 @@ public class ShowForDoctActivity extends AppCompatActivity implements RecordAdap
             }
         });
     }
-
     //实现接口方法，跳转到医生列表页面
-
     public void onItemClick(RecordData record) {
 
     }

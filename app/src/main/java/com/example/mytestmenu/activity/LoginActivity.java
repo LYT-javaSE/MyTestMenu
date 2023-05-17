@@ -7,7 +7,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -121,7 +123,6 @@ public class LoginActivity extends AppCompatActivity{
                 Toast.makeText(LoginActivity.this, "账号或密码为空", Toast.LENGTH_SHORT).show();
                 return;
             }
-
 //          发送登录请求
             String user_url = Base_URL + "/users/login";
             RequestBody requestBody = new FormBody.Builder()
@@ -164,6 +165,14 @@ public class LoginActivity extends AppCompatActivity{
                                         Log.d("状态码：", String.valueOf(code));
                                         // 登录成功，解析用户信息并跳转到主界面
                                         runOnUiThread(() -> {
+
+                                            // 登录成功，保存登录状态
+                                            SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putString("phone", phone);
+                                            editor.putString("password", pwd);
+                                            editor.apply();
+
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                             intent.putExtra("userPhone", userPhone);
                                             intent.putExtra("userName", userName);
@@ -203,7 +212,6 @@ public class LoginActivity extends AppCompatActivity{
                 }
             });
         }
-
 //        医生端登录
         else {
 //            医生端登录
@@ -264,6 +272,14 @@ public class LoginActivity extends AppCompatActivity{
                                                 intent.putExtra("doctAge", doctAge);
                                                 startActivity(intent);
                                             }else {
+
+                                                // 登录成功，保存登录状态
+                                                SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putString("phone", phone);
+                                                editor.putString("password", pwd);
+                                                editor.apply();
+
                                                 Intent intent = new Intent(LoginActivity.this, DocBaseActivity.class);
                                                 intent.putExtra("doctPhone", doctPhone);
                                                 intent.putExtra("doctName", doctName);

@@ -26,8 +26,6 @@ public class DocHomeFragment extends Fragment {
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_doc_home, container, false);
 
-
-
         mBtn1=view.findViewById(R.id.btn_process_registration);
         mBtn2=view.findViewById(R.id.btn_process_online_consultation);
         Bundle bundle=getArguments();
@@ -39,11 +37,8 @@ public class DocHomeFragment extends Fragment {
             Intent intent=new Intent(getContext(), ShowForDoctActivity.class);
             intent.putExtra("name",name);
             intent.putExtra("num",num);
-//            intent.putExtra("sex",sex);
-//            intent.putExtra("age",age);
             getActivity().startActivity(intent);
         });
-
 
         return view;
     }
