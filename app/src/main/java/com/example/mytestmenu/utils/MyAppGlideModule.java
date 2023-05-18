@@ -5,6 +5,5 @@ import com.bumptech.glide.module.AppGlideModule;
 
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
-    // Glide 模块的配置代码（可选）
+    // Leave empty for now
 }
-

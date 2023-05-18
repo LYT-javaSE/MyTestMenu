@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity{
     private EditText medtPho;
     private EditText medtPwd;
     private RadioGroup radioGroup;
+    private CheckBox mcheckBox;
 //    private String mTile; // 医生职称
 //    private String mHospital; // 医院名称
 //    private String mDepartment; // 科室名称
@@ -69,6 +71,7 @@ public class LoginActivity extends AppCompatActivity{
         tvReg=findViewById(R.id.register_text);
         tvPwd=findViewById(R.id.forgot_password_text);
         medtPho=findViewById(R.id.phone_text);
+        mcheckBox=findViewById(R.id.checkbox);
         // 设置手机号输入框的 TextWatcher 监听器
         medtPho.addTextChangedListener(new TextWatcher() {
             @Override
@@ -165,13 +168,21 @@ public class LoginActivity extends AppCompatActivity{
                                         Log.d("状态码：", String.valueOf(code));
                                         // 登录成功，解析用户信息并跳转到主界面
                                         runOnUiThread(() -> {
-
                                             // 登录成功，保存登录状态
-                                            SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                                            editor.putString("phone", phone);
-                                            editor.putString("password", pwd);
-                                            editor.apply();
+                                            if (mcheckBox.isChecked()){
+                                                SharedPreferences sharedPreferences = getSharedPreferences("login_status", MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putString("phone", phone);
+                                                editor.putString("password", pwd);
+                                                editor.putString("role", String.valueOf(isPatient));
+                                                editor.putBoolean("isRemember",true);
+                                                editor.apply();
+                                            }else {
+                                                SharedPreferences sharedPreferences = getSharedPreferences("login_status", MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putBoolean("isRemember",false);
+                                                editor.apply();
+                                            }
 
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                             intent.putExtra("userPhone", userPhone);
@@ -183,6 +194,7 @@ public class LoginActivity extends AppCompatActivity{
                                             startActivity(intent);
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                             Log.d("成功登录提示,欢迎：", userName);
+                                            LoginActivity.this.finish();
                                         });
                                     }
                                 }else {
@@ -274,11 +286,20 @@ public class LoginActivity extends AppCompatActivity{
                                             }else {
 
                                                 // 登录成功，保存登录状态
-                                                SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
-                                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                editor.putString("phone", phone);
-                                                editor.putString("password", pwd);
-                                                editor.apply();
+                                                if (mcheckBox.isChecked()){
+                                                    SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                    editor.putString("phone", phone);
+                                                    editor.putString("password", pwd);
+                                                    editor.putString("role", String.valueOf(isPatient));
+                                                    editor.putBoolean("isRemember",true);
+                                                    editor.apply();
+                                                }else {
+                                                    SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                    editor.putBoolean("isRemember",false);
+                                                    editor.apply();
+                                                }
 
                                                 Intent intent = new Intent(LoginActivity.this, DocBaseActivity.class);
                                                 intent.putExtra("doctPhone", doctPhone);
@@ -289,6 +310,7 @@ public class LoginActivity extends AppCompatActivity{
                                                 intent.putExtra("doctAge", doctAge);
                                                 intent.putExtra("doctTile", doctTile);
                                                 startActivity(intent);
+                                                LoginActivity.this.finish();
                                             }
 
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();

@@ -33,21 +33,30 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         handler.postDelayed(runnable,6000);
 
         // 检查登录状态
-        SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("login_status",MODE_PRIVATE);
+        boolean isRemember=sharedPreferences.getBoolean("isRemember",false);
         String phone = sharedPreferences.getString("phone", "");
         String password = sharedPreferences.getString("password", "");
-
-        if (!phone.isEmpty() && !password.isEmpty()) {
-            // 已登录，跳转到主界面
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // 结束当前启动页，防止用户按返回键返回到该页面
-        } else {
-            // 未登录，跳转到登录界面
-            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+        String role = sharedPreferences.getString("role", "");
+        if (isRemember){
+            if (!phone.isEmpty() && !password.isEmpty() && role.equals("true")) {
+                // 已登录，跳转到主界面
+                Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+            } else if (!phone.isEmpty() && !password.isEmpty() && role.equals("false")) {
+                // 已登录，跳转到主界面
+                Intent intent = new Intent(WelcomeActivity.this, DocBaseActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                // 未登录，跳转到登录界面
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+            }
         }
+
 
     }
 

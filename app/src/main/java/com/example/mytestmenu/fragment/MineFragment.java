@@ -78,7 +78,7 @@ public class MineFragment extends Fragment {
                 SharedPreferences sp = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.clear();
-                editor.commit();
+                editor.apply();
                 Intent intent=new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
             }});

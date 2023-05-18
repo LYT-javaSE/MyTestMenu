@@ -62,7 +62,7 @@ public class ForgetPwdActivity extends AppCompatActivity implements View.OnClick
         Intent intent = getIntent();
         if (intent != null) {
             // 从 Intent 中获取用户类型参数
-            Boolean userType = intent.getBooleanExtra("user_type：", true);
+            Boolean userType = intent.getBooleanExtra("user_type", true);
             // 从上一个页面获取要修改密码的手机号码
             mPhone = intent.getStringExtra("phone");
             Log.d("传过来的手机号：", mPhone);
@@ -155,7 +155,6 @@ public class ForgetPwdActivity extends AppCompatActivity implements View.OnClick
                         });
                     }
                 }
-
             } else {
                 // 医生修改密码
                 Log.d("用户类型", "注册界面: " + userType);
