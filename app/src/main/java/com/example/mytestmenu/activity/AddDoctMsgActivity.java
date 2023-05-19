@@ -139,6 +139,8 @@ public class AddDoctMsgActivity extends AppCompatActivity{
                         runOnUiThread(() -> {
                             if (code == 200) {
                                 Toast.makeText(AddDoctMsgActivity.this, "完善成功！", Toast.LENGTH_SHORT).show();
+//                                跳到DoctMineFragment最好
+
                             } else {
                                 Toast.makeText(AddDoctMsgActivity.this, message, Toast.LENGTH_SHORT).show();
                             }

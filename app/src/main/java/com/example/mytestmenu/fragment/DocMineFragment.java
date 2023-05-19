@@ -1,94 +1,100 @@
 package com.example.mytestmenu.fragment;
 
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.mytestmenu.activity.RegisterActivity.Base_URL;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.example.mytestmenu.PopupWindow.CommonPopupWindow;
-import com.example.mytestmenu.PopupWindow.CommonUtil;
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.activity.AddDoctMsgActivity;
-import com.example.mytestmenu.activity.AddMsgActivity;
 import com.example.mytestmenu.activity.LoginActivity;
-import com.example.mytestmenu.entity_class.Avatar;
-import com.example.mytestmenu.entity_class.Doctors;
-import com.example.mytestmenu.utils.FileStorage;
-import com.example.mytestmenu.utils.SPUtils;
-import com.google.gson.Gson;
+import com.example.mytestmenu.utils.ImageUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import pub.devrel.easypermissions.EasyPermissions;
 
-public class DocMineFragment extends Fragment implements CommonPopupWindow.ViewInterface, EasyPermissions.PermissionCallbacks {
+public class DocMineFragment extends Fragment  {
 
+    public static final int REQUEST_CODE_TAKE = 1;
+    public static final int REQUEST_CODE_CHOOSE = 0;
     private TextView mTextView1;
     private String phone;
     private String name;
-    private CommonPopupWindow commonPopupWindow;
     private ImageView mIcon;
+    private Uri imageUri;
+    private String imageBase64;
 
-    private String[] permissions = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA};
-    private Uri uri;
-    private int type;
-    Uri cropUri;
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_doc_mine, container, false);
 
-        mIcon = view.findViewById(R.id.avatar_image1);
+        SharedPreferences spf = getActivity().getSharedPreferences("login_status",MODE_PRIVATE);
+        String doctorPhone = spf.getString("phone", "");
+        Log.d("tttCC", "spf传过来的值"+doctorPhone);
 
+
+
+
+
+
+
+
+        mIcon = view.findViewById(R.id.avatar_image1);
         Button mBtn=view.findViewById(R.id.edit_profile_button);
         Button mBtn2=view.findViewById(R.id.logout_button);
         mTextView1=view.findViewById(R.id.doctName_text_view);
@@ -103,6 +109,9 @@ public class DocMineFragment extends Fragment implements CommonPopupWindow.ViewI
         String path=bundle.getString("avatar");
         mTextView1.setText(name);
         mTextView2.setText(phone);
+//        显示图片
+//        mIcon.setImageBitmap();
+
         mBtn.setOnClickListener(v -> {
             Intent intent=new Intent(getContext(), AddDoctMsgActivity.class);
             intent.putExtra("name",name);
@@ -113,261 +122,267 @@ public class DocMineFragment extends Fragment implements CommonPopupWindow.ViewI
             getActivity().startActivity(intent);
         });
         mBtn2.setOnClickListener(v -> {
-            SharedPreferences sp = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+            SharedPreferences sp = getActivity().getSharedPreferences("login_status", MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.clear();
             editor.apply();
-            Intent intent=new Intent(getContext(), LoginActivity.class);
+            Intent intent=new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
         });
 
-        if (path != null) {
-            loadCircleImage(getContext(), path, mIcon);
-        }
-        mIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAll(v);
-            }
-        });
-
+        // 为ImageView设置点击事件监听器
+        mIcon.setOnClickListener(this::showPopupWindow);
         return view;
     }
+
+    private void showPopupWindow(View anchorView) {
+        // 创建PopupWindow布局
+        View popupView = LayoutInflater.from(getContext()).inflate(R.layout.popup_up, null);
+        // 创建PopupWindow
+        PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        popupWindow.setFocusable(true); // 设置PopupWindow可获得焦点
+        popupWindow.setOutsideTouchable(true); // 点击PopupWindow以外的区域可以关闭PopupWindow
+
+        // 设置相机按钮的点击事件
+        Button cameraButton = popupView.findViewById(R.id.btn_take_photo);
+        cameraButton.setOnClickListener(v -> {
+            // 处理相机按钮的点击事件
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED){
+                Log.d("BBBBBBB", "去打开相机！ ");
+                doTake();
+                Log.d("BBBBBBB", "去打开相机！ ");
+            }else {
+                ActivityCompat.requestPermissions(requireActivity(),new String[]{Manifest.permission.CAMERA},1);
+            }
+            popupWindow.dismiss(); // 关闭PopupWindow
+        });
+
+        // 设置相册按钮的点击事件
+        Button galleryButton = popupView.findViewById(R.id.btn_select_photo);
+        galleryButton.setOnClickListener(v -> {
+            // 处理相册按钮的点击事件
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("CCCCCCCCC", "去打开相册！ ");
+                openAlbum();
+                Log.d("CCCCCCCCC", "去打开相册！ ");
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            }
+            popupWindow.dismiss();
+        });
+
+        // 设置取消按钮的点击事件
+        Button cancelButton = popupView.findViewById(R.id.btn_cancel);
+        cancelButton.setOnClickListener(v -> {
+            // 处理取消按钮的点击事件
+            popupWindow.dismiss();
+        });
+        // 获取当前页面的视图
+        View rootView = getActivity().getWindow().getDecorView().getRootView();
+        rootView.setDrawingCacheEnabled(true);
+        rootView.buildDrawingCache();
+        // 创建一个 Bitmap 对象，并将当前页面的视图绘制到 Bitmap 上
+        Bitmap bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+        rootView.setDrawingCacheEnabled(false);
+        // 对 Bitmap 进行模糊处理
+        Bitmap blurredBitmap = blurBitmap(bitmap, 10); // 模糊半径可以根据需要进行调整
+        // 创建模糊效果的背景
+        BitmapDrawable background = new BitmapDrawable(getResources(), blurredBitmap);
+        // 设置背景模糊效果
+        background.setColorFilter(Color.parseColor("#80000000"), PorterDuff.Mode.SRC_OVER);
+        popupWindow.setBackgroundDrawable(background);
+        // 计算弹窗的偏移量
+        int offsetX = (anchorView.getWidth() - popupView.getWidth()) / 2;
+        int offsetY = (anchorView.getHeight() - popupView.getHeight()) / 2;
+        // 设置弹窗的位置
+        popupWindow.showAsDropDown(anchorView, offsetX, offsetY);
+    }
+    private Bitmap blurBitmap(Bitmap bitmap, int radius) {
+        // 创建 RenderScript 对象
+        RenderScript rs = RenderScript.create(getContext());
+        // 创建一个用于输入的 Allocation 对象
+        Allocation input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+        // 创建一个用于输出的 Allocation 对象
+        Allocation output = Allocation.createTyped(rs, input.getType());
+        // 创建一个模糊效果的 RenderScript 脚本对象
+        ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        blurScript.setInput(input);
+        // 设置模糊半径
+        blurScript.setRadius(radius);
+        // 执行模糊处理
+        blurScript.forEach(output);
+        // 将处理后的 Allocation 对象内容复制到 Bitmap 对象中
+        output.copyTo(bitmap);
+        // 销毁 RenderScript 对象
+        rs.destroy();
+        return bitmap;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_TAKE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                doTake();
+                Log.d("DDDDDDDDDDDDDDD", "已获得摄像头权限 ");
+            } else {
+                Log.d("DDDDDDDDDDDDDDD", "没有获得摄像头权限 ");
+                Toast.makeText(getContext(), "你没有获得摄像头权限~", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_CHOOSE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openAlbum();
+                Log.d("DDDDDDDDDDDDDDD", "已获得相册权限 ");
+            } else {
+                Log.d("DDDDDDDDDDDDDDD", "获得摄像头权限 ");
+                Toast.makeText(getContext(), "你没有获得访问相册的权限~", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_TAKE) {
+            if (resultCode == RESULT_OK) {
+                // 获取拍摄的照片
+                try {
+                    InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    mIcon.setImageBitmap(bitmap);
+                    String imageToBase64 = ImageUtil.imageToBase64(bitmap);
+                    imageBase64 = imageToBase64;
+//                    将imageBase64可以保存到数据库里，但没必要
+//                    可以将图片路径保存到数据库里
+
+
+                } catch (FileNotFoundException e) {
+
+                }
+            }
+        } else if (requestCode == REQUEST_CODE_CHOOSE) {
+            if (Build.VERSION.SDK_INT < 19) {
+                handleImageBeforeApi19(data);
+            } else {
+                handleImageOnApi19(data);
+            }
+        }
+    }
+
+    private void handleImageBeforeApi19(Intent data) {
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri,null);
+        displayImage(imagePath);
+    }
+    private void handleImageOnApi19(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(requireContext(), uri)) {
+            String documentId = DocumentsContract.getDocumentId(uri);
+            if (TextUtils.equals(uri.getAuthority(), "com.android.providers.media.documents")) {
+                String id = documentId.split(":")[1];
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if (TextUtils.equals(uri.getAuthority(), "com.android.providers.downloads.documents")) {
+                if (documentId != null && documentId.startsWith("msf:")) {
+                    resolveMSFContent(uri, documentId);
+                    return;
+                }
+                assert documentId != null;
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.parseLong(documentId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);
+//        还可以把路径保存到数据库里，使下次登录时能找到该路径并显示
+    }
+
+    private void resolveMSFContent(Uri uri, String documentId) {
+        File file = new File(getActivity().getCacheDir(), "temp_file" + getActivity().getContentResolver().getType(uri).split("/")[1]);
+        try {
+            InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
+            OutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[4 * 1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            mIcon.setImageBitmap(bitmap);
+            imageBase64 = ImageUtil.imageToBase64(bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                if (columnIndex >= 0) {
+                    path = cursor.getString(columnIndex);
+                } else {
+                    Log.e("TAG", "Invalid column index");
+                    // 处理无效的列索引
+                    // 可以使用默认值或其他处理逻辑
+                }
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        Log.d("TAG", "displayImage: ------------" + imagePath);
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            mIcon.setImageBitmap(bitmap);
+            String imageToBase64 = ImageUtil.imageToBase64(bitmap);
+            imageBase64 = imageToBase64;
+        }
+    }
+
+    private void doTake(){
+        File imageTemp = new File(getActivity().getExternalCacheDir(), "imageOut.jpeg");
+        if (imageTemp.exists()){
+            imageTemp.delete();
+        }
+        try {
+            imageTemp.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (Build.VERSION.SDK_INT>24){
+            imageUri= FileProvider.getUriForFile(getContext(),"com.example.mytestmenu.fileprovider",imageTemp);
+        }else {
+            imageUri=Uri.fromFile(imageTemp);
+        }
+        Intent intent=new Intent();
+        intent.setAction("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+        startActivityForResult(intent,REQUEST_CODE_TAKE);
+    }
+    private void openAlbum() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE_CHOOSE);
+    }
+
+
 //    @Override
 //    public void onResume() {
 //        super.onResume();
 //        // 当从其他页面返回到此页面时，重新填充数据
 //        fillData();
 //    }
-
-
-
-    //全屏弹出
-    public void showAll(View view) {
-        if (commonPopupWindow != null && commonPopupWindow.isShowing()) return;
-        View upView = LayoutInflater.from(getContext()).inflate(R.layout.popup_up, null);
-        //测量View的宽高
-        CommonUtil.measureWidthAndHeight(upView);
-        commonPopupWindow = new CommonPopupWindow.Builder(getContext())
-                .setView(R.layout.popup_up)
-                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
-                .setBackGroundLevel(0.5f)//取值范围0.0f-1.0f 值越小越暗
-                .setViewOnclickListener(this)
-                .create();
-        commonPopupWindow.showAtLocation(upView.findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
-    }
-
-    @Override
-    public void getChildView(View view, int layoutResId) {
-        switch (layoutResId) {
-            case R.layout.popup_up:
-                Button btn_take_photo = (Button) view.findViewById(R.id.btn_take_photo);
-                Button btn_select_photo = (Button) view.findViewById(R.id.btn_select_photo);
-                Button btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
-                btn_take_photo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        type = 1;
-                        getPermission();    //写个if  判断是不是在6.0以上版本   不是直接调用方法
-                        if (commonPopupWindow != null) {
-                            commonPopupWindow.dismiss();
-                        }
-                    }
-                });
-                btn_select_photo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        type = 2;
-                        getPermission();
-                        if (commonPopupWindow != null) {
-                            commonPopupWindow.dismiss();
-                        }
-                    }
-                });
-                btn_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (commonPopupWindow != null) {
-                            commonPopupWindow.dismiss();
-                        }
-                    }
-                });
-                view.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (commonPopupWindow != null) {
-                            commonPopupWindow.dismiss();
-                        }
-                        return true;
-                    }
-                });
-                break;
-        }
-    }
-
-    //获取权限
-    public void getPermission() {
-        //检测是否有权限
-        if (EasyPermissions.hasPermissions(getContext(),permissions)) {
-            switch (type) {
-                case 1:
-                    getCamera();
-                    break;
-                case 2:
-                    getPhotoAlbum();
-                    break;
-            }
-        } else {
-            EasyPermissions.requestPermissions(this, "用于读取相册和拍照功能", 1, permissions);
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-    //权限申请成功
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        switch (type) {
-            case 1:
-                getCamera();
-                break;
-            case 2:
-                getPhotoAlbum();
-                break;
-        }
-    }
-    //权限申请失败时的回调
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        Toast.makeText(getContext(), "请在应用管理里面对应用进行重新授权", Toast.LENGTH_SHORT).show();
-        getActivity().finish();
-    }
-
-    //相册
-    public void getPhotoAlbum() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_PICK);
-        intent.setType("image/*");  //type  指定获取 image类型的所有文件
-        startActivityForResult(intent, 2);
-        //系统相册选图返回的Uri是可以直接使用的，不需要也不能使用FileProvider进行转换
-    }
-
-    //照相功能
-    /*思路
-     * 首先是调用相机  意图
-     * 第二步 获取图片路径
-     * 最后保存并返回
-     */
-    private void getCamera() {
-        File file = new FileStorage().createCropFile();
-                /*   方法                               描述
-        File(File dir, String name) File对象类型的目录路径，name为文件名或目录名。
-        File(String path)   path为新File对象的路径。
-        File(String dirPath, String name)   dirPath为指定的文件路径，name为文件名或目录名。
-        File(URI uri)   使用URI指定路径来创建新的File对象。*/
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(getContext(), "com.ycb.baseicon.fileProvider", file);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//临时授予读写权限
-        } else {
-            //低版本路径转成uri
-            uri = Uri.fromFile(file);
-        }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);  //将图片保存在这个位置
-        startActivityForResult(intent, 1);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode) {
-            //照相
-            case 1:
-                //此处不可写成 data.getData
-                // 因为上面通过putExtra  将地址存在了 uri  这个指定的路径里面
-                startPhotoZoom(uri);
-                break;
-            //相册
-            case 2:
-                //从相册返回的uri  可以看在getPhotoAlbum处的注解
-                startPhotoZoom(data.getData());
-                // content                  media
-                Log.i("文件地址", data.getScheme() + " " + data.getData().getAuthority() +
-                        data.getData().getHost() + data.getData().getPort() + "  " + data.getData().getPath() + "\n" + data.getData());
-                //content://media/external/images/media/1036430   path: /external/images/media/1036430
-                break;
-            //裁剪
-            case 3:
-                Bundle bundle = data.getExtras();
-                if (bundle != null) {
-                    //裁剪处有对照表  键名为data   类型是 parcelable   value (因为写的是true )  bitmap
-                    Bitmap bitmap = bundle.getParcelable("data");
-                    String path = saveImage(bitmap);
-                    loadCircleImage(getContext(), path, mIcon);
-                    SPUtils.putString(getContext(), "icon", path);
-                }
-                Log.i("Uri", cropUri.toString());
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    //裁剪方法
-    private void startPhotoZoom(Uri uri) {
-        File file = new FileStorage().createCropFile();
-        cropUri = Uri.fromFile(file);  //file 类型转成了 uri 类型 最后在下面使用   最终将裁剪后的图片保存在这个指定的位置
-        //调用系统裁剪的意图
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            //添加这一句表示对目标应用临时授权该Uri所代表的文件
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-
-        intent.setDataAndType(uri, "image/*");  //设置data （uri） 和type  类型
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1); // 裁剪框比例
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 300); // 输出图片大小
-        intent.putExtra("outputY", 300);
-        intent.putExtra("scale", true);
-        //Intent 的data域最大传递的值的大小约为1M，所以图片的BITMAP当超过1M时就会失败 : 无法传递大图  false 传递uri
-        intent.putExtra("return-data", true);  //true  表示返回的是bitmap对象  为true的情况下 一般在图片尺寸480*480 崩溃
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);  //将 图像转移保存到  -》 croupUri   ：   uri位置
-        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true); // no face detection
-        startActivityForResult(intent, 3);
-    }
-
-    /**
-     * 加载圆形图片
-     */
-    public static void loadCircleImage(Context context, String path, ImageView imageView) {
-        // RequestOptions  扩展glide  自定义加载方式
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .circleCrop()//设置圆形
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
-        Glide.with(context).load(path).apply(options).into(imageView);
-    }
-
-    //获取图像的String类型path 地址   可以用于保存或者上传到服务器
-    public String saveImage(Bitmap bmp) {
-        File file = new FileStorage().createIconFile();
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);  //图片压缩
-            fos.flush();
-            fos.close();
-            return file.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
 
     private void fillData(){
         OkHttpClient client = new OkHttpClient();

@@ -1,6 +1,9 @@
 package com.example.mytestmenu.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +28,10 @@ public class DocHomeFragment extends Fragment {
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_doc_home, container, false);
+
+        SharedPreferences spf = getActivity().getSharedPreferences("login_status",MODE_PRIVATE);
+        String doctorPhone = spf.getString("phone", "");
+        Log.d("tttCC", "spf传过来的值"+doctorPhone);
 
         mBtn1=view.findViewById(R.id.btn_process_registration);
         mBtn2=view.findViewById(R.id.btn_process_online_consultation);

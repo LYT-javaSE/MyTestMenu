@@ -48,10 +48,6 @@ public class LoginActivity extends AppCompatActivity{
     private EditText medtPwd;
     private RadioGroup radioGroup;
     private CheckBox mcheckBox;
-//    private String mTile; // 医生职称
-//    private String mHospital; // 医院名称
-//    private String mDepartment; // 科室名称
-//    private String mTalent; // 擅长领域
 
     private boolean isPatient=true; // 记录点击的按钮是否为患者按钮
     @Override
@@ -64,6 +60,33 @@ public class LoginActivity extends AppCompatActivity{
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
+
+        // 检查登录状态
+        SharedPreferences sharedPreferences = getSharedPreferences("login_status",MODE_PRIVATE);
+        boolean isRemember=sharedPreferences.getBoolean("isRemember",false);
+        String phone = sharedPreferences.getString("phone", "");
+        String password = sharedPreferences.getString("password", "");
+        String role = sharedPreferences.getString("role", "");
+        if (isRemember){
+            if (!phone.isEmpty() && !password.isEmpty() && role.equals("true")) {
+                // 已登录，跳转到主界面
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                intent.putExtra("userPhone", phone);
+                startActivity(intent);
+                finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+            } else if (!phone.isEmpty() && !password.isEmpty() && role.equals("false")) {
+                // 已登录，跳转到主界面
+                Intent intent = new Intent(LoginActivity.this, DocBaseActivity.class);
+//                intent.putExtra("doctPhone", phone);
+                startActivity(intent);
+                finish();
+            } else {
+                // 未登录，跳转到登录界面
+                Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // 结束当前启动页，防止用户按返回键返回到该页面
+            }
         }
 
 //      找到控件
@@ -284,7 +307,6 @@ public class LoginActivity extends AppCompatActivity{
                                                 intent.putExtra("doctAge", doctAge);
                                                 startActivity(intent);
                                             }else {
-
                                                 // 登录成功，保存登录状态
                                                 if (mcheckBox.isChecked()){
                                                     SharedPreferences sharedPreferences = getSharedPreferences("login_status", Context.MODE_PRIVATE);
@@ -311,8 +333,8 @@ public class LoginActivity extends AppCompatActivity{
                                                 intent.putExtra("doctTile", doctTile);
                                                 startActivity(intent);
                                                 LoginActivity.this.finish();
+//                                                Log.d("vvvvvv", "跳转吗？");
                                             }
-
                                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                         });
                                     }
