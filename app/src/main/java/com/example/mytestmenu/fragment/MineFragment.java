@@ -75,12 +75,13 @@ public class MineFragment extends Fragment {
         mBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                SharedPreferences sp = getActivity().getSharedPreferences("login_status", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.apply();
+//                SharedPreferences sp = getActivity().getSharedPreferences("login_status", Context.MODE_PRIVATE);
+//                SharedPreferences.Editor editor = sp.edit();
+//                editor.clear();
+//                editor.apply();
                 Intent intent=new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
+                requireActivity().finish();
             }});
 
         return mV;

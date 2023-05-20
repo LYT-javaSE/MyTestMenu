@@ -83,16 +83,6 @@ public class DocMineFragment extends Fragment  {
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_doc_mine, container, false);
 
-        SharedPreferences spf = getActivity().getSharedPreferences("login_status",MODE_PRIVATE);
-        String doctorPhone = spf.getString("phone", "");
-        Log.d("tttCC", "spf传过来的值"+doctorPhone);
-
-
-
-
-
-
-
 
         mIcon = view.findViewById(R.id.avatar_image1);
         Button mBtn=view.findViewById(R.id.edit_profile_button);
@@ -106,11 +96,36 @@ public class DocMineFragment extends Fragment  {
         String num=bundle.getString("num");
         String sex=bundle.getString("sex");
         int age=bundle.getInt("age");
-        String path=bundle.getString("avatar");
+        String imagePath=bundle.getString("avatar");
         mTextView1.setText(name);
         mTextView2.setText(phone);
 //        显示图片
-//        mIcon.setImageBitmap();
+//        String imagePath="/storage/emulated/0/Pictures/IMG_20230519_160022~2.jpg";
+//        如果后端传过来的为空，那么就用默认头像，否则将就用选定的头像
+//        if(imagePath == null || imagePath.isEmpty()){
+//            displayImage("/storage/emulated/0/Pictures/IMG_20230519_160022~2.jpg");
+//        }else {
+//            displayImage(imagePath);
+//        }
+
+        if (imagePath != null && !imagePath.isEmpty()) {
+            if (isFilePath(imagePath)) {
+                // 如果是文件路径，直接加载图片
+                displayImage(imagePath);
+            } else {
+                // 如果是Uri，使用InputStream加载图片
+                try {
+                    InputStream inputStream = getActivity().getContentResolver().openInputStream(Uri.parse(imagePath));
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    mIcon.setImageBitmap(bitmap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            // 如果图片路径为空，使用默认的图片或者显示占位符
+            mIcon.setImageResource(R.drawable.cycle);
+        }
 
         mBtn.setOnClickListener(v -> {
             Intent intent=new Intent(getContext(), AddDoctMsgActivity.class);
@@ -122,17 +137,26 @@ public class DocMineFragment extends Fragment  {
             getActivity().startActivity(intent);
         });
         mBtn2.setOnClickListener(v -> {
-            SharedPreferences sp = getActivity().getSharedPreferences("login_status", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.clear();
-            editor.apply();
+//            SharedPreferences spf = getActivity().getSharedPreferences("login_status", MODE_PRIVATE);
+//            SharedPreferences.Editor editor = spf.edit();
+//            editor.clear();
+//            editor.apply();
             Intent intent=new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
+            requireActivity().finish();
         });
 
         // 为ImageView设置点击事件监听器
         mIcon.setOnClickListener(this::showPopupWindow);
         return view;
+    }
+
+    private boolean isFilePath(String path) {
+        if (path == null || path.isEmpty()) {
+            return false;
+        }
+        File file = new File(path);
+        return file.exists() && file.isFile();
     }
 
     private void showPopupWindow(View anchorView) {
@@ -245,19 +269,37 @@ public class DocMineFragment extends Fragment  {
         if (requestCode == REQUEST_CODE_TAKE) {
             if (resultCode == RESULT_OK) {
                 // 获取拍摄的照片
+
+                // 上传图片到服务器
+                uploadImageToServer(String.valueOf(imageUri));
+                Log.d("tttttttttttttttttttt", String.valueOf(imageUri));
+//                    显示图片
+                InputStream inputStream = null;
                 try {
-                    InputStream inputStream = getActivity().getContentResolver().openInputStream(imageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mIcon.setImageBitmap(bitmap);
-                    String imageToBase64 = ImageUtil.imageToBase64(bitmap);
-                    imageBase64 = imageToBase64;
-//                    将imageBase64可以保存到数据库里，但没必要
-//                    可以将图片路径保存到数据库里
-
-
+                    inputStream = getActivity().getContentResolver().openInputStream(imageUri);
                 } catch (FileNotFoundException e) {
-
+                    throw new RuntimeException(e);
                 }
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                mIcon.setImageBitmap(bitmap);
+                fillData();
+//                    Log.d("hhhhhhhhhhh", "onActivityResult: "+bitmap);
+////                    可以把字节流变成字符串，可以保存起来（但不必要），我们只要地址即可
+//                    String imageToBase64 = ImageUtil.imageToBase64(bitmap);
+//                    imageBase64 = imageToBase64;
+////                    Log.d("hhhhhhhhhhh", "onActivityResult: "+imageBase64);
+////                    传地址到后端
+////                    String selection = MediaStore.Images.Media.DATA + " LIKE '%imageOut%'";
+//                    String imagePath = getImagePath(imageUri, null);
+//                    Log.d("***%%%%%%***", "相机传过来的图片地址"+imagePath);
+//                    uploadImageToServer(imagePath);
+
+                // 显示图片
+//                Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath());
+//                mIcon.setImageBitmap(bitmap);
+//                // 获取图片路径
+//                String imagePath = getImagePath(imageUri, null);
+//                Log.d("***%%%%%%***", "相机传过来的图片地址" + imagePath);
             }
         } else if (requestCode == REQUEST_CODE_CHOOSE) {
             if (Build.VERSION.SDK_INT < 19) {
@@ -272,6 +314,8 @@ public class DocMineFragment extends Fragment  {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri,null);
         displayImage(imagePath);
+        uploadImageToServer(imagePath);
+        fillData();
     }
     private void handleImageOnApi19(Intent data) {
         String imagePath = null;
@@ -298,6 +342,8 @@ public class DocMineFragment extends Fragment  {
         }
         displayImage(imagePath);
 //        还可以把路径保存到数据库里，使下次登录时能找到该路径并显示
+        uploadImageToServer(imagePath);
+        fillData();
     }
 
     private void resolveMSFContent(Uri uri, String documentId) {
@@ -321,32 +367,33 @@ public class DocMineFragment extends Fragment  {
         }
     }
 
-    private String getImagePath(Uri uri, String selection) {
+    // 进一步解析真实Uri
+    @SuppressLint("Range")
+    private String getImagePath(Uri uri, String selection){
         String path = null;
         Cursor cursor = getActivity().getContentResolver().query(uri, null, selection, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
-                if (columnIndex >= 0) {
-                    path = cursor.getString(columnIndex);
-                } else {
-                    Log.e("TAG", "Invalid column index");
-                    // 处理无效的列索引
-                    // 可以使用默认值或其他处理逻辑
-                }
+        Log.d("ooooooooo",uri+"&&"+selection);
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
             }
             cursor.close();
         }
+        Log.d("ppppppppppppp",path);
         return path;
     }
+
 
     private void displayImage(String imagePath) {
         Log.d("TAG", "displayImage: ------------" + imagePath);
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             mIcon.setImageBitmap(bitmap);
+//            可以将字节流转换为字符串存起来（也就是说可以作为图片的名字imageName）
             String imageToBase64 = ImageUtil.imageToBase64(bitmap);
             imageBase64 = imageToBase64;
+        }else {
+            Log.d("TAG", "图片路径为空,显示默认图片");
         }
     }
 
@@ -376,13 +423,60 @@ public class DocMineFragment extends Fragment  {
         startActivityForResult(intent, REQUEST_CODE_CHOOSE);
     }
 
+    // 传递图片地址到后端数据库
+    private void uploadImageToServer(String imagePath) {
+        // 创建请求体
+        OkHttpClient client = new OkHttpClient();
+        String doct_url = Base_URL + "/docts/editAvatar";
+        RequestBody requestBody = new FormBody.Builder()
+                .add("phone",phone)
+                .add("avatar_path",imagePath)
+                .build();
+        // 创建请求
+        Request request = new Request.Builder()
+                .url(doct_url)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 处理请求失败的情况
+                e.printStackTrace();
+                Toast.makeText(getContext(), "网络请求失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                // 处理请求成功的情况
+                if (response.isSuccessful()) {
+                    JSONObject responseBody = null;
+                    try {
+                        responseBody = new JSONObject(response.body().string());
+                        int code = responseBody.getInt("code");
+                        if (code==200){
+                            Log.d("显示响应成功信息:", "换头像成功");
+                        }
+                    } catch (JSONException | IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    // 处理请求失败的情况
+                    String errorMessage = response.message();
+                    // 显示错误提示
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                        Log.d("理应显示响应错误信息:", errorMessage);
+                    });
+                }
+            }
+        });
+    }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        // 当从其他页面返回到此页面时，重新填充数据
-//        fillData();
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 当从其他页面返回到此页面时，重新填充数据
+        fillData();
+    }
 
     private void fillData(){
         OkHttpClient client = new OkHttpClient();
@@ -409,17 +503,39 @@ public class DocMineFragment extends Fragment  {
                         String doctName = subDataObject.getString("doctName");
 //                        头像也要传一下吧
                         String avatarPath = subDataObject.getString("doctAvatar");
-                        Log.d("vvvvvvv", "avatarPath: "+avatarPath);
-//                        String realFilePath = getRealPathFromUri(Uri.parse(avatarPath));
-//                        Log.d("vvvvvvv", "realFilePath: "+realFilePath);
                         getActivity().runOnUiThread(() -> {
                             if (code == 200) {
                                 Log.d("TAG", "onResponse: " + code);
                                 mTextView1.setText(doctName);
-                                if (avatarPath != null) {
-//                                    Glide.with(DocMineFragment.this).load(avatarPath).into(avatarImageView);
-                                    Log.d("TAG%%%%%%", "success");
+
+//                                mTextView2.setText(phone);
+//                                if (avatarPath != null && !avatarPath.isEmpty()) {
+//                                    displayImage(avatarPath);
+//                                    Log.d("TAG%%%%%%", "success");
+//                                }else {
+//                                    Log.d("TAG%%%%%%", "fail");
+//                                }
+
+                                Log.d("vvvvvvv", "avatarPath: "+avatarPath);
+                                if (avatarPath != null && !avatarPath.isEmpty()) {
+                                    if (isFilePath(avatarPath)) {
+                                        // 如果是文件路径，直接加载图片
+                                        displayImage(avatarPath);
+                                    } else {
+                                        // 如果是Uri，使用InputStream加载图片
+                                        try {
+                                            InputStream inputStream = getActivity().getContentResolver().openInputStream(Uri.parse(avatarPath));
+                                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                                            mIcon.setImageBitmap(bitmap);
+                                        } catch (FileNotFoundException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    // 如果图片路径为空，使用默认的图片或者显示占位符
+                                    mIcon.setImageResource(R.drawable.cycle);
                                 }
+
                             }
                         });
                     } catch (JSONException | IOException e) {

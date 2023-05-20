@@ -8,6 +8,9 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageUtil {
     public static String imageToBase64(Bitmap bitmap) {
+        if (bitmap == null) {
+            return null; // 处理空对象的情况，返回 null 或者其他适合的默认值
+        }
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] buffer = byteArrayOutputStream.toByteArray();
