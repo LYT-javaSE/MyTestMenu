@@ -6,12 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.InquiryActivity">
+    tools:context=".activity.ChatActivity">
+
+    <TextView
+        android:id="@+id/bt_name"
+        android:text="username"
+        android:textSize="18sp"
+        android:textColorHighlight="@color/red"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_inquiry"
+        android:id="@+id/chat_recycview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1">
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -19,14 +30,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:id="@+id/input_text"
+            android:id="@+id/chat_inputText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="请输入症状" />
-
         <Button
-            android:id="@+id/send"
+            android:id="@+id/chat_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="发送" />

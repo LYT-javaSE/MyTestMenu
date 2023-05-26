@@ -128,6 +128,10 @@ public class RegFinalActivity extends AppCompatActivity implements DatePickerDia
         String doc_name = intent.getStringExtra("doctor_name");
         String u_phone = intent.getStringExtra("userPhone");
 
+        if (name.equals("") ||ageIpt.getText().toString().trim().equals("") ||sex.equals("")||phone.equals("")) {
+            Toast.makeText(RegFinalActivity.this, "输入信息为空，请完善", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String user_url = Base_URL + "/users/createReg";
         Guahao guahao = new Guahao();
         guahao.setPatientName(name);

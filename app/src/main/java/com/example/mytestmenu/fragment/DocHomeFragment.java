@@ -16,12 +16,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.activity.AddDoctMsgActivity;
+import com.example.mytestmenu.activity.ShowAdminInfoActivity;
 import com.example.mytestmenu.activity.ShowForDoctActivity;
 
 public class DocHomeFragment extends Fragment {
 
     private Button mBtn1;
-    private Button mBtn2;
+//    private Button mBtn2;
+    private Button mBtn3;
     private String name;
     private String num;
     @Nullable
@@ -34,7 +36,9 @@ public class DocHomeFragment extends Fragment {
 //        Log.d("tttCC", "spf传过来的值"+doctorPhone);
 
         mBtn1=view.findViewById(R.id.btn_process_registration);
-        mBtn2=view.findViewById(R.id.btn_process_online_consultation);
+//        mBtn2=view.findViewById(R.id.btn_process_online_consultation);
+        mBtn3=view.findViewById(R.id.btn_chat_admin);
+
         Bundle bundle=getArguments();
         if (bundle != null) {
             name = bundle.getString("name");
@@ -44,6 +48,16 @@ public class DocHomeFragment extends Fragment {
             Intent intent=new Intent(getContext(), ShowForDoctActivity.class);
             intent.putExtra("name",name);
             intent.putExtra("num",num);
+            getActivity().startActivity(intent);
+        });
+//        mBtn2.setOnClickListener(v -> {
+//            Intent intent=new Intent(getContext(), DocItemFragment.class);
+//            intent.putExtra("name",name);
+//            intent.putExtra("num",num);
+//            getActivity().startActivity(intent);
+//        });
+        mBtn3.setOnClickListener(v->{
+            Intent intent=new Intent(getContext(), ShowAdminInfoActivity.class);
             getActivity().startActivity(intent);
         });
 

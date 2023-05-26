@@ -8,8 +8,6 @@ public class Avatar extends LitePalSupport {
     private String filePath;
 
 
-
-
     public int getId() {
         return id;
     }

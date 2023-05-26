@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,25 +11,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- 挂号信息展示 -->
-        <TextView
-            android:id="@+id/tv_registration_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="挂号信息展示" />
-
-        <!-- 按钮区域 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
->
-
             <!-- 处理挂号按钮 -->
             <Button
                 android:id="@+id/btn_process_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="挂号列表" />
 
             <!-- 取消挂号按钮 -->
@@ -38,7 +26,7 @@
 <!--                android:layout_height="wrap_content"-->
 <!--                android:text="取消挂号" />-->
 
-        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -78,12 +66,96 @@
             android:text="在线问诊信息展示" />
 
         <!-- 处理在线问诊按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+
         <Button
             android:id="@+id/btn_process_online_consultation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="处理在线问诊" />
+            android:text="处理在线问诊"
+            android:layout_margin="3dp"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/btn_chat_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="沟通管理员"
+            android:layout_margin="3dp"
+            android:layout_weight="1"/>
+        </LinearLayout>
 
     </LinearLayout>
 
+            <!-- 医生信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="医生姓名"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="医生职称"
+                    android:textSize="14sp"
+                    android:textColor="@color/red"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="所属医院"
+                    android:textSize="14sp"
+                    android:textColor="@color/red"/>
+            </LinearLayout>
+
+        <!-- 分割线 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/yellow"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 功能按钮区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg1"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg2"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg1"
+                android:background="?attr/selectableItemBackground"
+                android:padding="16dp"
+
+                android:layout_weight="1"/>
+        </LinearLayout>
 </LinearLayout>
+

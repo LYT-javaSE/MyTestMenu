@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.adapter.RegDoctAdapter;
 import com.example.mytestmenu.entity_class.Doctors;
+import com.example.mytestmenu.utils.ActivityCollector;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,13 +36,16 @@ import okhttp3.Response;
 public class BeforeInquiryActivity extends AppCompatActivity implements RegDoctAdapter.ItemClickListener {
 
     private RecyclerView mRV;
-    private RegDoctAdapter mAdapter;
+    public static RegDoctAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<Doctors> mDoctors = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_before_inquiry);
+
+        ImageView imgBack = findViewById(R.id.back);
+        imgBack.setOnClickListener(v -> finish());
 
         mRV = findViewById(R.id.rvDoctorList);
         mRV.setHasFixedSize(true);
@@ -68,7 +74,6 @@ public class BeforeInquiryActivity extends AppCompatActivity implements RegDoctA
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonStr = response.body().string();
-                Log.d("打印响应体", jsonStr);
                 JSONArray jsonArray = null;
                 try {
                     JSONObject jsonObject = new JSONObject(jsonStr);
@@ -79,10 +84,7 @@ public class BeforeInquiryActivity extends AppCompatActivity implements RegDoctA
                 List<Doctors> doctors = new Gson().fromJson(String.valueOf(jsonArray), new TypeToken<List<Doctors>>(){}.getType());
 
                 for (Doctors doctor : doctors) {
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctName = " + doctor.getDoctName());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctOfHospital = " + doctor.getDoctOfHospital());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctOfOffice = " + doctor.getDoctOfOffice());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctTitle = " + doctor.getDoctTile());
+                    Log.d("打印列表项：", "doctName = " + doctor.getDoctName());
                 }
 
                 runOnUiThread(new Runnable() {
@@ -99,12 +101,16 @@ public class BeforeInquiryActivity extends AppCompatActivity implements RegDoctA
 
     @Override
     public void onItemClick(Doctors doctor) {
-        Intent intent = new Intent(this, InquiryActivity.class);
+        Intent intent = new Intent(this, ChatActivity.class);
 
         intent.putExtra("office_name", doctor.getDoctOfOffice());
         intent.putExtra("hospital_name",doctor.getDoctOfHospital());
         intent.putExtra("doctor_name", doctor.getDoctName());
+        intent.putExtra("doctor_phone", doctor.getDoctPhone());
 
         startActivity(intent);
+//        加入监测集合，启动时即监测
+        Activity currentActivity =this;
+        ActivityCollector.addActivity(currentActivity, ChatActivity.class);
     }
 }

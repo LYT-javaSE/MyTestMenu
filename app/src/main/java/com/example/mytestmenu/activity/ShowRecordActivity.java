@@ -83,7 +83,6 @@ public class ShowRecordActivity extends AppCompatActivity implements RecordAdapt
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonStr = response.body().string();
-                Log.d("打印响应体", jsonStr);
                 JSONArray jsonArray = null;
                 try {
                     JSONObject jsonObject = new JSONObject(jsonStr);

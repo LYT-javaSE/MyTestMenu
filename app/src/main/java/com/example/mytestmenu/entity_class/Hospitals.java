@@ -10,7 +10,7 @@ public class Hospitals extends LitePalSupport {
     private String name;
     private String office;
     private String address;
-    private List<Offices> officesList = new ArrayList<>();
+//    private List<Offices> officesList = new ArrayList<>();
 
 
     public void setId(int id) {
@@ -40,10 +40,10 @@ public class Hospitals extends LitePalSupport {
         return address;
     }
 
-    public List<Offices> getOfficesList() {
-        return officesList;
-    }
-    public void setOfficesList(List<Offices> officesList) {
-        this.officesList = officesList;
-    }
+//    public List<Offices> getOfficesList() {
+//        return officesList;
+//    }
+//    public void setOfficesList(List<Offices> officesList) {
+//        this.officesList = officesList;
+//    }
 }

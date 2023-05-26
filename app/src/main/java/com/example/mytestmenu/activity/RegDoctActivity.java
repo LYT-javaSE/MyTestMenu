@@ -100,10 +100,11 @@ public class RegDoctActivity extends AppCompatActivity implements RegDoctAdapter
                 List<Doctors> doctors = new Gson().fromJson(String.valueOf(jsonArray), new TypeToken<List<Doctors>>(){}.getType());
 
                 for (Doctors doctor : doctors) {
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctName = " + doctor.getDoctName());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctOfHospital = " + doctor.getDoctOfHospital());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctOfOffice = " + doctor.getDoctOfOffice());
-                    Log.d("打印列表项(共5项含图片,先不含图)：", "doctTitle = " + doctor.getDoctTile());
+                    Log.d("打印列表项(共5项含图片)：", "doctName = " + doctor.getDoctName());
+                    Log.d("打印列表项(共5项含图片)：", "doctOfHospital = " + doctor.getDoctOfHospital());
+                    Log.d("打印列表项(共5项含图片)：", "doctOfOffice = " + doctor.getDoctOfOffice());
+                    Log.d("打印列表项(共5项含图片)：", "doctTitle = " + doctor.getDoctTile());
+                    Log.d("打印列表项(共5项含图片)：", "doctAvatar = " + doctor.getDoctAvatar());
                 }
 
                 runOnUiThread(new Runnable() {
@@ -121,8 +122,6 @@ public class RegDoctActivity extends AppCompatActivity implements RegDoctAdapter
 
     @Override
     public void onItemClick(Doctors doctor) {
-
-
         Intent intent1 = getIntent();
         String u_phone=intent1.getStringExtra("u_phone");
 

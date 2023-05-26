@@ -7,27 +7,28 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mytestmenu.R;
+import com.example.mytestmenu.UserManager;
+import com.example.mytestmenu.chat.WebSocketManager;
+import com.example.mytestmenu.entity_class.MsgContent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.LitePal;
+import org.litepal.crud.LitePalSupport;
 
 import java.io.IOException;
 
@@ -47,9 +48,10 @@ public class LoginActivity extends AppCompatActivity{
     private EditText medtPho;
     private EditText medtPwd;
     private RadioGroup radioGroup;
-    private CheckBox mcheckBox;
+//    private CheckBox mcheckBox;
 
-    private boolean isPatient=true; // 记录点击的按钮是否为患者按钮
+    public static boolean isPatient=true; // 记录点击的按钮是否为患者按钮
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +96,7 @@ public class LoginActivity extends AppCompatActivity{
         tvReg=findViewById(R.id.register_text);
         tvPwd=findViewById(R.id.forgot_password_text);
         medtPho=findViewById(R.id.phone_text);
-        mcheckBox=findViewById(R.id.checkbox);
+//        mcheckBox=findViewById(R.id.checkbox);
         // 设置手机号输入框的 TextWatcher 监听器
         medtPho.addTextChangedListener(new TextWatcher() {
             @Override
@@ -118,17 +120,14 @@ public class LoginActivity extends AppCompatActivity{
         medtPwd=findViewById(R.id.password_text);
 //      绑定身份
         radioGroup=findViewById(R.id.rg_role);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if (i==R.id.rb_patient){
-                    isPatient=true;
-                    Toast.makeText(LoginActivity.this,"用户端登录",Toast.LENGTH_LONG).show();
-                }
-                else {
-                    isPatient=false;
-                    Toast.makeText(LoginActivity.this,"医生端登录",Toast.LENGTH_LONG).show();
-                }
+        radioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (i==R.id.rb_patient){
+                isPatient=true;
+                Toast.makeText(LoginActivity.this,"用户端登录",Toast.LENGTH_LONG).show();
+            }
+            else {
+                isPatient=false;
+                Toast.makeText(LoginActivity.this,"医生端登录",Toast.LENGTH_LONG).show();
             }
         });
         //      点击登录
@@ -145,6 +144,7 @@ public class LoginActivity extends AppCompatActivity{
         String pwd=medtPwd.getText().toString().trim();
 //        用户端登录
         if (isPatient) {
+            System.out.println("用户端要登录了"+isPatient);
             if (phone.equals("") || pwd.equals("")) {
                 Toast.makeText(LoginActivity.this, "账号或密码为空", Toast.LENGTH_SHORT).show();
                 return;
@@ -191,6 +191,11 @@ public class LoginActivity extends AppCompatActivity{
                                         Log.d("状态码：", String.valueOf(code));
                                         // 登录成功，解析用户信息并跳转到主界面
                                         runOnUiThread(() -> {
+                                            //全局变量
+                                            UserManager.getInstance().setUserPhone(userPhone);
+                                            //        登录进入就进行初始化、尝试建立连接
+                                            WebSocketManager.initializeWebSocket();
+
                                             // 登录成功，保存登录状态
 //                                            if (mcheckBox.isChecked()){
 //                                                SharedPreferences sharedPreferences = getSharedPreferences("login_status", MODE_PRIVATE);
@@ -249,6 +254,7 @@ public class LoginActivity extends AppCompatActivity{
         }
 //        医生端登录
         else {
+            System.out.println("医生端要登录了"+isPatient);
 //            医生端登录
             if (phone.equals("") || pwd.equals("")) {
                 Toast.makeText(LoginActivity.this, "账号或密码为空", Toast.LENGTH_SHORT).show();
@@ -297,6 +303,14 @@ public class LoginActivity extends AppCompatActivity{
                                         // 登录成功，解析用户信息并跳转到主界面
                                         JSONObject finalSubDataObject = subDataObject;
                                         runOnUiThread(() -> {
+
+                                            //全局变量
+                                            UserManager.getInstance().setDoctPhone(doctPhone);
+
+                                            //        登录进入就进行初始化、尝试建立连接
+                                            WebSocketManager.initializeWebSocket();
+
+
                                             if (finalSubDataObject.isNull("doctTile")){
                                                 Intent intent = new Intent(LoginActivity.this, DoctKeyInfoActivity.class);
                                                 intent.putExtra("doctPhone", doctPhone);

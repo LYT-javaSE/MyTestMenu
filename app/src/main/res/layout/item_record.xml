@@ -52,7 +52,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="2023-05-10" />
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="取消挂号" />
 
 </LinearLayout>
-
-    </LinearLayout>
+</LinearLayout>

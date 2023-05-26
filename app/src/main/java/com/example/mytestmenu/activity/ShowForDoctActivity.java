@@ -34,6 +34,7 @@ import okhttp3.Response;
 
 public class ShowForDoctActivity extends AppCompatActivity implements RecordAdapter.ItemClickListener{
 
+    private String first,second;
     private RecyclerView mRV;
     private RecordAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -52,17 +53,18 @@ public class ShowForDoctActivity extends AppCompatActivity implements RecordAdap
         mAdapter = new RecordAdapter(mRecordData, this);
         mRV.setAdapter(mAdapter);
 
+        Intent intent =getIntent();
+        /*取出Intent中附加的数据*/
+        first= intent.getStringExtra("name");
+        second = intent.getStringExtra("num");
+        Log.d("TAG", "onCreate: "+first);
+        Log.d("TAG", "onCreate: "+second);
         initView();
-
     }
 
     private void initView() {
         OkHttpClient client = new OkHttpClient();
         String doct_url = Base_URL + "/docts/showGuahao";
-        Intent intent =getIntent();
-//                        /*取出Intent中附加的数据*/
-        String first = intent.getStringExtra("name");
-        String second = intent.getStringExtra("num");
 //      应该是向后端传值,再接收传过来的数据
 //      构造请求体
         RequestBody requestBody = new FormBody.Builder()
@@ -91,13 +93,10 @@ public class ShowForDoctActivity extends AppCompatActivity implements RecordAdap
                     e.printStackTrace();
                 }
                 List<RecordData> recordData = new Gson().fromJson(String.valueOf(jsonArray), new TypeToken<List<RecordData>>(){}.getType());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecordData.clear();
-                        mRecordData.addAll(recordData);
-                        mAdapter.notifyDataSetChanged();
-                    }
+                runOnUiThread(() -> {
+                    mRecordData.clear();
+                    mRecordData.addAll(recordData);
+                    mAdapter.notifyDataSetChanged();
                 });
             }
         });

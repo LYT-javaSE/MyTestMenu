@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -12,6 +13,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.mytestmenu.R;
+import com.example.mytestmenu.chat.WebSocketManager;
+import com.example.mytestmenu.entity_class.MsgContent;
+
+import org.litepal.LitePal;
+import org.litepal.exceptions.DataSupportException;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView mtvCountDown;
@@ -22,7 +28,10 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
+
         initView();
+
+        LitePal.getDatabase();
 
         //创建倒计时类
         mCountDownTimer = new MyCountDownTimer(6000, 1000);
@@ -32,7 +41,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         //这是一个 Handler 里面的逻辑是从 Splash 界面跳转到 Main 界面
         handler.postDelayed(runnable,6000);
     }
-
 
     //定义线程，执行跳转
     Runnable runnable = new Runnable() {

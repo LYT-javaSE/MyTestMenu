@@ -20,9 +20,11 @@ import androidx.fragment.app.Fragment;
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.activity.AddMsgActivity;
 import com.example.mytestmenu.activity.LoginActivity;
+import com.example.mytestmenu.entity_class.MsgContent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.LitePal;
 
 import java.io.IOException;
 
@@ -64,6 +66,7 @@ public class MineFragment extends Fragment {
 
         mBtn.setOnClickListener(v -> {
             Intent intent=new Intent(getContext(), AddMsgActivity.class);
+//            LitePal.deleteAll(MsgContent.class,"id>?","1");
             intent.putExtra("name",name);
             intent.putExtra("phone",phone);
             intent.putExtra("age",age);
@@ -72,21 +75,18 @@ public class MineFragment extends Fragment {
             getActivity().startActivity(intent);
         });
 
-        mBtn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
+        mBtn2.setOnClickListener(v -> {
 //                SharedPreferences sp = getActivity().getSharedPreferences("login_status", Context.MODE_PRIVATE);
 //                SharedPreferences.Editor editor = sp.edit();
 //                editor.clear();
 //                editor.apply();
-                Intent intent=new Intent(getActivity(), LoginActivity.class);
-                startActivity(intent);
-                requireActivity().finish();
-            }});
+            Intent intent=new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        });
 
         return mV;
     }
-
 
     @Override
     public void onResume() {

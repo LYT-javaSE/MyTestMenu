@@ -15,6 +15,7 @@
             android:id="@+id/back"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_gravity="center"
             android:src="@drawable/flow"/>
         <TextView
             android:layout_width="match_parent"
@@ -22,7 +23,6 @@
             android:text="请选择医生"
             android:textSize="30sp" />
     </LinearLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDoctorList"
         android:layout_width="match_parent"

@@ -47,10 +47,12 @@ import androidx.fragment.app.Fragment;
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.activity.AddDoctMsgActivity;
 import com.example.mytestmenu.activity.LoginActivity;
+import com.example.mytestmenu.entity_class.MsgContent;
 import com.example.mytestmenu.utils.ImageUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.LitePal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -100,14 +102,6 @@ public class DocMineFragment extends Fragment  {
         mTextView1.setText(name);
         mTextView2.setText(phone);
 //        显示图片
-//        String imagePath="/storage/emulated/0/Pictures/IMG_20230519_160022~2.jpg";
-//        如果后端传过来的为空，那么就用默认头像，否则将就用选定的头像
-//        if(imagePath == null || imagePath.isEmpty()){
-//            displayImage("/storage/emulated/0/Pictures/IMG_20230519_160022~2.jpg");
-//        }else {
-//            displayImage(imagePath);
-//        }
-
         if (imagePath != null && !imagePath.isEmpty()) {
             if (isFilePath(imagePath)) {
                 // 如果是文件路径，直接加载图片
@@ -129,6 +123,7 @@ public class DocMineFragment extends Fragment  {
 
         mBtn.setOnClickListener(v -> {
             Intent intent=new Intent(getContext(), AddDoctMsgActivity.class);
+//            LitePal.deleteAll("MsgContent","mid=?","30");
             intent.putExtra("name",name);
             intent.putExtra("phone",phone);
             intent.putExtra("num",num);
@@ -151,7 +146,7 @@ public class DocMineFragment extends Fragment  {
         return view;
     }
 
-    private boolean isFilePath(String path) {
+    public boolean isFilePath(String path) {
         if (path == null || path.isEmpty()) {
             return false;
         }
@@ -283,23 +278,6 @@ public class DocMineFragment extends Fragment  {
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 mIcon.setImageBitmap(bitmap);
                 fillData();
-//                    Log.d("hhhhhhhhhhh", "onActivityResult: "+bitmap);
-////                    可以把字节流变成字符串，可以保存起来（但不必要），我们只要地址即可
-//                    String imageToBase64 = ImageUtil.imageToBase64(bitmap);
-//                    imageBase64 = imageToBase64;
-////                    Log.d("hhhhhhhhhhh", "onActivityResult: "+imageBase64);
-////                    传地址到后端
-////                    String selection = MediaStore.Images.Media.DATA + " LIKE '%imageOut%'";
-//                    String imagePath = getImagePath(imageUri, null);
-//                    Log.d("***%%%%%%***", "相机传过来的图片地址"+imagePath);
-//                    uploadImageToServer(imagePath);
-
-                // 显示图片
-//                Bitmap bitmap = BitmapFactory.decodeFile(imageUri.getPath());
-//                mIcon.setImageBitmap(bitmap);
-//                // 获取图片路径
-//                String imagePath = getImagePath(imageUri, null);
-//                Log.d("***%%%%%%***", "相机传过来的图片地址" + imagePath);
             }
         } else if (requestCode == REQUEST_CODE_CHOOSE) {
             if (Build.VERSION.SDK_INT < 19) {
@@ -384,7 +362,7 @@ public class DocMineFragment extends Fragment  {
     }
 
 
-    private void displayImage(String imagePath) {
+    public void displayImage(String imagePath) {
         Log.d("TAG", "displayImage: ------------" + imagePath);
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
@@ -507,14 +485,6 @@ public class DocMineFragment extends Fragment  {
                             if (code == 200) {
                                 Log.d("TAG", "onResponse: " + code);
                                 mTextView1.setText(doctName);
-
-//                                mTextView2.setText(phone);
-//                                if (avatarPath != null && !avatarPath.isEmpty()) {
-//                                    displayImage(avatarPath);
-//                                    Log.d("TAG%%%%%%", "success");
-//                                }else {
-//                                    Log.d("TAG%%%%%%", "fail");
-//                                }
 
                                 Log.d("vvvvvvv", "avatarPath: "+avatarPath);
                                 if (avatarPath != null && !avatarPath.isEmpty()) {

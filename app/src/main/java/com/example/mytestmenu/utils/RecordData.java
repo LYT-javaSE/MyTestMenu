@@ -1,7 +1,5 @@
 package com.example.mytestmenu.utils;
 
-import java.util.Date;
-
 public class RecordData {
 //    挂号人姓名
         private String patientName;

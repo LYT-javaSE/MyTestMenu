@@ -106,15 +106,12 @@ public class RegisterActivity extends AppCompatActivity {
                         user.setUserPhone(phone);
                         user.setUserPassword(password);
                         user.setUserRePassword(repassword);
-
                         // 将用户对象转换为 JSON 字符串
                         String json = new Gson().toJson(user);
                         // 设置请求体的 MediaType
                         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-
                         // 创建 RequestBody 对象
                         RequestBody requestBody = RequestBody.create(mediaType, json);
-
                         // 构建 POST 请求
                         Request request = new Request.Builder()
                                 .url(user_url)
@@ -123,14 +120,8 @@ public class RegisterActivity extends AppCompatActivity {
                         client.newCall(request).enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(RegisterActivity.this, "网络请求失败，请重试", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                runOnUiThread(() -> Toast.makeText(RegisterActivity.this, "网络请求失败，请重试", Toast.LENGTH_SHORT).show());
                             }
-
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
                                 if (response.isSuccessful()) {
@@ -139,41 +130,30 @@ public class RegisterActivity extends AppCompatActivity {
                                         JSONObject responseBody = new JSONObject(response.body().string());
                                         int code = responseBody.getInt("code");
                                         String message=responseBody.optString("message","未知错误");
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (code==200) {
-                                                    Toast.makeText(RegisterActivity.this, "注册成功，请登录！", Toast.LENGTH_SHORT).show();
-                                                    Log.d("显示响应成功信息:", "注册成功");
-                                                    Log.d("显示响应成功信息:", String.valueOf(code));
-                                                } else {
-                                                    Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
-                                                    Log.d("理应显示响应成功但结果异常的信息:", message);
-                                                    Log.d("显示响应成功信息:", String.valueOf(code));
-                                                }
-                                                startActivity(intent);
+                                        runOnUiThread(() -> {
+                                            if (code==200) {
+                                                Toast.makeText(RegisterActivity.this, "注册成功，请登录！", Toast.LENGTH_SHORT).show();
+                                                Log.d("显示响应成功信息:", "注册成功");
+                                                Log.d("显示响应成功信息:", String.valueOf(code));
+                                            } else {
+                                                Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                                                Log.d("理应显示响应成功但结果异常的信息:", message);
+                                                Log.d("显示响应成功信息:", String.valueOf(code));
                                             }
+                                            startActivity(intent);
                                         });
                                     } catch (JSONException | IOException e) {
                                         e.printStackTrace();
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                        runOnUiThread(() -> Toast.makeText(RegisterActivity.this, "解析响应体出错", Toast.LENGTH_SHORT).show());
                                     }
                                 }
                                 else {
                                     // 处理错误响应
                                     String errorMessage = response.message();
                                     // 显示错误提示
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                                            Log.d("理应显示响应错误信息:", errorMessage);
-                                        }
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                                        Log.d("理应显示响应错误信息:", errorMessage);
                                     });
                                 }
                             }

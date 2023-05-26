@@ -1,56 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- activity_main.xml -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-
-
+    android:layout_height="match_parent">
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="end">
-        <ImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/cycle" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="张三"
-                android:textColor="@android:color/black"
-                android:textSize="10sp" />
-            <TextView
-                android:id="@+id/tvName2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="男"
-                android:textColor="@android:color/black"
-                android:textSize="10sp" />
-            <TextView
-                android:id="@+id/tvName3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="20岁"
-                android:textColor="@android:color/black"
-                android:textSize="10sp" />
-        </LinearLayout>
-    </LinearLayout>
+        android:text="用户列表"
+        android:textSize="20sp"
+        android:textColor="@color/black"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/user_list_recycview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"/>
     <!-- 聊天框布局 -->
 
+    </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>

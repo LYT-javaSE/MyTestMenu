@@ -9,7 +9,7 @@ public class Offices extends LitePalSupport{
 
     private int id;
     private String office;
-    private List<Hospitals> hospitalsList = new ArrayList<>();
+//    private List<Hospitals> hospitalsList = new ArrayList<>();
 
 
     public void setId(int id) {
@@ -30,13 +30,13 @@ public class Offices extends LitePalSupport{
 
 
 
-    public List<Hospitals> getHospitalsList() {
-        return hospitalsList;
-    }
-
-    public void setHospitalsList(List<Hospitals> hospitalsList) {
-        this.hospitalsList = hospitalsList;
-    }
+//    public List<Hospitals> getHospitalsList() {
+//        return hospitalsList;
+//    }
+//
+//    public void setHospitalsList(List<Hospitals> hospitalsList) {
+//        this.hospitalsList = hospitalsList;
+//    }
 
 //    @Override
 //    public String toString() {

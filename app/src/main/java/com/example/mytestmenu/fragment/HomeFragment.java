@@ -1,7 +1,6 @@
 package com.example.mytestmenu.fragment;
 
-import androidx.fragment.app.Fragment;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,15 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.mytestmenu.R;
 import com.example.mytestmenu.activity.BeforeInquiryActivity;
-import com.example.mytestmenu.activity.InquiryActivity;
 import com.example.mytestmenu.activity.MapActivity;
 import com.example.mytestmenu.activity.RegHospitalActivity;
+import com.example.mytestmenu.activity.ShowDoctorListActivity;
 import com.example.mytestmenu.activity.ShowRecordActivity;
 
 import java.util.ArrayList;
@@ -56,6 +56,62 @@ public class HomeFragment extends Fragment {
     private TextView title;
     private ViewPagerAdapter adapter;
     private ScheduledExecutorService scheduledExecutorService;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView=inflater.inflate(R.layout.fragment_home, null);
+        setView();
+
+        Bundle bundle=getArguments();
+        if (bundle != null) {
+            phone=bundle.getString("phone");
+            Log.d("接收Main", "onCreateView: "+phone);
+        }
+
+//        跳转到地图
+        ImageView imgView=mView.findViewById(R.id.img_address);
+        imgView.setOnClickListener(v -> {
+            Intent intent=new Intent(getContext(),MapActivity.class);
+            getActivity().startActivity(intent);
+        });
+//         跳转到挂号
+        ImageView imgView1=mView.findViewById(R.id.guahao);
+        imgView1.setOnClickListener(v -> {
+            Intent intent1=new Intent(getContext(), RegHospitalActivity.class);
+            intent1.putExtra("userPhone",phone);
+            Log.d("home传递","显示——————"+phone);
+            getActivity().startActivity(intent1);
+        });
+//         跳转到问诊
+        ImageView imgView2=mView.findViewById(R.id.wenzhen);
+        imgView2.setOnClickListener(v -> {
+            Intent intent2=new Intent(getContext(), BeforeInquiryActivity.class);
+            getActivity().startActivity(intent2);
+        });
+
+
+        //         跳转到记录
+        ImageView imgView3=mView.findViewById(R.id.record);
+        imgView3.setOnClickListener(v -> {
+            Intent intent3=new Intent(getContext(), ShowRecordActivity.class);
+            intent3.putExtra("userPhone",phone);
+            Log.d("home传递", "显示——*******"+phone);
+            getActivity().startActivity(intent3);
+        });
+
+
+        //         跳转到查询
+        ImageView imgView4=mView.findViewById(R.id.chaxun);
+        imgView4.setOnClickListener(v -> {
+            Intent intent4=new Intent(getContext(), ShowDoctorListActivity.class);
+            getActivity().startActivity(intent4);
+        });
+
+
+
+        return mView;
+    }
 
     private void setView(){
         mViewPaper = (ViewPager)mView.findViewById(R.id.vpban);
@@ -158,6 +214,7 @@ public class HomeFragment extends Fragment {
     /**
      * 接收子线程传递过来的数据
      */
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg) {
             mViewPaper.setCurrentItem(currentItem);
@@ -172,73 +229,5 @@ public class HomeFragment extends Fragment {
             scheduledExecutorService.shutdown();
             scheduledExecutorService = null;
         }
-    }
-
-
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView=inflater.inflate(R.layout.fragment_home, null);
-        setView();
-//        跳转到地图
-        ImageView imgView=mView.findViewById(R.id.img_address);
-        imgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent intent=new Intent(getContext(),MapActivity.class);
-                getActivity().startActivity(intent);
-            }});
-//         跳转到挂号
-        ImageView imgView1=mView.findViewById(R.id.guahao);
-        imgView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent intent=new Intent(getContext(), RegHospitalActivity.class);
-                intent.putExtra("userPhone",phone);
-                Log.d("home传递",phone);
-                getActivity().startActivity(intent);
-            }});
-//         跳转到问诊
-        ImageView imgView2=mView.findViewById(R.id.wenzhen);
-        imgView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent intent=new Intent(getContext(), BeforeInquiryActivity.class);
-                getActivity().startActivity(intent);
-            }});
-
-
-        Bundle bundle=getArguments();
-        if (bundle != null) {
-            phone=bundle.getString("phone");
-            Log.d("接收Main", "onCreateView: "+phone);
-        }
-
-
-        //         跳转到记录
-        ImageView imgView3=mView.findViewById(R.id.record);
-        imgView3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent intent=new Intent(getContext(), ShowRecordActivity.class);
-                intent.putExtra("userPhone",phone);
-                Log.d("home传递", phone);
-                getActivity().startActivity(intent);
-            }});
-
-
-        //         跳转到查询
-//        ImageView imgView4=mView.findViewById(R.id.chaxun);
-//        imgView4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v){
-//                Intent intent=new Intent(getContext(), ShowDoctorListActivity.class);
-//                getActivity().startActivity(intent);
-//            }});
-
-
-
-        return mView;
     }
 }

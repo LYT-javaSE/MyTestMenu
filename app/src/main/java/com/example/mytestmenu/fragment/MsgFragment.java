@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytestmenu.R;
-import com.example.mytestmenu.activity.InquiryActivity;
+import com.example.mytestmenu.activity.ChatActivity;
 
 public class MsgFragment extends Fragment {
 
@@ -25,11 +25,9 @@ public class MsgFragment extends Fragment {
         recyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                Intent intent=new Intent(getContext(), InquiryActivity.class);
+                Intent intent=new Intent(getContext(), ChatActivity.class);
                 getActivity().startActivity(intent);
             }});
-
-
         return view;
     }
 

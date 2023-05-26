@@ -2,13 +2,9 @@ package com.example.mytestmenu.entity_class;
 
 import org.litepal.crud.LitePalSupport;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 public class Users extends LitePalSupport {
     private int id;
     private int userAge;
-//    用户的生日
     private String  birthDay;
     private String userName;
     private String userPhone;
